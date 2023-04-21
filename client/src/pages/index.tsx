@@ -1,3 +1,4 @@
+import { formatTime } from "@/utils/date";
 import { useState } from "react";
 import io from "socket.io-client";
 
@@ -6,6 +7,7 @@ const socket = io("http://localhost:5000", { transports: ["websocket"] });
 type Message = {
   author: string;
   message: string;
+  time: Date;
 };
 
 const Home = () => {
@@ -13,13 +15,18 @@ const Home = () => {
   const [id, setId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
-    socket.emit("send message", { author: id, message: message });
+    socket.emit("send-message", {
+      author: id,
+      message: message,
+      time: new Date(),
+    });
   };
 
-  socket.on("userId", (data) => {
-    setId(data);
+  socket.on("userId", (id) => {
+    setId(id);
   });
   socket.on("message", (data) => {
+    data.time = new Date(data.time);
     if (messages.length == 0) {
       setMessages([data]);
     } else {
@@ -47,7 +54,7 @@ const Home = () => {
       <div className="pl-10">
         {messages.map((m, index) => (
           <li key={index}>
-            {m.author} {m.message}
+            {m.author} {m.message} {formatTime(m.time)}
           </li>
         ))}
       </div>
