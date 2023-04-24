@@ -2,7 +2,8 @@ import { formatTime } from "@/utils/date";
 import { useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000", { transports: ["websocket"] });
+const URL = process.env.NEXT_PUBLIC_URL ?? "";
+const socket = io(URL, { transports: ["websocket"] });
 
 type Message = {
   author: string;
