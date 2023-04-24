@@ -9,18 +9,25 @@ type Message = {
   author: string;
   message: string;
   time: Date;
+  room: string;
 };
 
 const Home = () => {
   const [message, setmessage] = useState("");
   const [id, setId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [room, setRoom] = useState("");
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     socket.emit("send-message", {
       author: id,
       message: message,
       time: new Date(),
+      room: room,
     });
+  };
+
+  const handleJoinRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
+    socket.emit("join-room", { username: id, room: room });
   };
 
   socket.on("userId", (id) => {
@@ -40,6 +47,19 @@ const Home = () => {
       <input
         className="p-2 mr-4 rounded-xl bg-gray-200 border-2 hover:border-black"
         type="text"
+        placeholder="room name"
+        onChange={(e) => setRoom(e.target.value)}
+      />
+      <button
+        className="p-2 mr-10 rounded-xl bg-blue-300 text-blue-800"
+        onClick={handleJoinRoom}
+      >
+        Join room
+      </button>
+      <input
+        className="p-2 mr-4 rounded-xl bg-gray-200 border-2 hover:border-black"
+        type="text"
+        placeholder="message"
         onChange={(e) => setmessage(e.target.value)}
       />
       <button

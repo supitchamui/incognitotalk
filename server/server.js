@@ -16,11 +16,14 @@ io.on("connection", (socket) => {
   socket.emit("userId", socket.id);
 
   socket.on("join-room", ({ username, room }) => {
+    // console.log(room);
     joinRoom(socket.id, username, room);
+    socket.join(room);
   });
 
   socket.on("send-message", (message) => {
-    io.emit("message", message);
+    // console.log(message.room);
+    io.to(message.room).emit("message", message);
   });
 
   socket.on("get-all-users", () => {
