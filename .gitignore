@@ -11,3 +11,9 @@ yarn-error.log*
 # env files
 .env
 .env.local
+
+# Mac
+.DS_Store
+
+# JetBrains
+*/.idea/*
