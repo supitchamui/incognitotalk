@@ -46,13 +46,19 @@ const Home = () => {
     <>
       <div className="min-h-screen h-full flex-col flex">
         <div className="bg-darkBgColor w-full h-20 items-center flex border-b border-borderColor">
-          <div className="flex items-center mr-0">
-            <div className="ml-5">
-              <Image src="/logo1.png" alt="" width={40} height={40}></Image>
+          <div className="flex items-center mr-0 justify-between flex-row w-full">
+            <div className="flex-row flex">
+              <div className="ml-5">
+                <Image src="/logo1.png" alt="" width={40} height={40}></Image>
+              </div>
+              <p className="ml-5 text-2xl font-lexend-deca text-white">
+                INCOGNITOTALK
+              </p>
             </div>
-            <p className="ml-5 text-2xl font-lexend-deca text-white">
-              INCOGNITOTALK
-            </p>
+            <div className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3">
+              <Image src="/Frame_8.png" alt="" width={50} height={50}></Image>
+              <p className="ml-3 text-sm font-roboto text-white">Anonymous</p>
+            </div>
           </div>
         </div>
         <div className="flex-1 flex-row flex">
