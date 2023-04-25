@@ -1,6 +1,7 @@
 import { useState } from "react";
 import io from "socket.io-client";
 import Image from "next/image";
+import Sidebar from "./Left-Sidebar/sidebar";
 
 const URL = process.env.NEXT_PUBLIC_URL ?? "";
 const socket = io(URL, { transports: ["websocket"] });
@@ -62,73 +63,7 @@ const Home = () => {
           </div>
         </div>
         <div className="flex-1 flex-row flex">
-          <div className="bg-darkBgColor w-28 items-center flex text-white flex-col justify-end font-roboto">
-            <div className="mb-8">
-              <button
-                type="button"
-                name="friends"
-                className="w-20 h-12 rounded-xl hover:bg-bgColor"
-              >
-                Friends
-              </button>
-            </div>
-            <div className="mb-8">
-              <button
-                type="button"
-                name="groups"
-                className="w-20 h-12 rounded-xl hover:bg-bgColor"
-              >
-                Groups
-              </button>
-            </div>
-            <div className="mb-12">
-              <button
-                type="button"
-                name="all-chats"
-                className="w-20 h-12 rounded-xl hover:bg-bgColor"
-              >
-                All Chats
-              </button>
-            </div>
-          </div>
-          <div className="bg-bgColor w-1/3 border-r border-borderColor">
-            <div className="h-28 w-full border-b border-borderColor items-center flex justify-center">
-              <div className="w-4/5">
-                <input
-                  type="text"
-                  className="w-full h-16 rounded-2xl bg-borderColor pl-5 text-white"
-                  placeholder="Search"
-                  name="search_user"
-                />
-              </div>
-            </div>
-            <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-              <Image
-                src="/Frame_8.png"
-                alt=""
-                width={75}
-                height={50}
-                className="ml-6"
-              ></Image>
-              <div className="font-roboto ml-6">
-                <p className="text-white text-xl">Someone</p>
-                <p className="text-fontBgColor text-base mt-2">Past Message</p>
-              </div>
-            </div>
-            <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-              <Image
-                src="/Frame_8.png"
-                alt=""
-                width={75}
-                height={50}
-                className="ml-6"
-              ></Image>
-              <div className="font-roboto ml-6">
-                <p className="text-white text-xl">Someone</p>
-                <p className="text-fontBgColor text-base mt-2">Past Message</p>
-              </div>
-            </div>
-          </div>
+          <Sidebar />
           <div className="bg-bgColor w-2/3">
             <div className="w-full h-full justify-center items-center flex-col flex">
               <Image
