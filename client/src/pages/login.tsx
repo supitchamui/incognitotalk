@@ -5,7 +5,7 @@ const Login = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-1 items-center bg-bgColor w-screen h-screen justify-center flex flex-col">
+    <div className="flex flex-1 flex-col items-center bg-bgColor w-screen h-screen justify-center">
       <Image src="/logo.png" alt="" width={400} height={200}></Image>
       <form className="w-1/4 mt-10 flex flex-row">
         <input

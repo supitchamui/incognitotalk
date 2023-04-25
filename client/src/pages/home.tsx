@@ -57,14 +57,32 @@ const Home = () => {
         </div>
         <div className="flex-1 flex-row flex">
           <div className="bg-darkBgColor w-28 items-center flex text-white flex-col justify-end font-roboto">
-            <div className="mb-10">
-              <p>Friends</p>
+            <div className="mb-8">
+              <button
+                type="button"
+                name="friends"
+                className="w-20 h-12 rounded-xl hover:bg-bgColor"
+              >
+                Friends
+              </button>
             </div>
-            <div className="mb-10">
-              <p>Groups</p>
+            <div className="mb-8">
+              <button
+                type="button"
+                name="groups"
+                className="w-20 h-12 rounded-xl hover:bg-bgColor"
+              >
+                Groups
+              </button>
             </div>
-            <div className="mb-16">
-              <p>All Chats</p>
+            <div className="mb-12">
+              <button
+                type="button"
+                name="all-chats"
+                className="w-20 h-12 rounded-xl hover:bg-bgColor"
+              >
+                All Chats
+              </button>
             </div>
           </div>
           <div className="bg-bgColor w-1/3 border-r border-borderColor">
