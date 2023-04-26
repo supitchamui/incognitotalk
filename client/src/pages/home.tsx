@@ -61,7 +61,7 @@ const Home = () => {
               className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3"
             >
               <Image src="/Frame_8.png" alt="" width={50} height={50}></Image>
-              <p className="ml-3 text-sm font-roboto text-white">Anonymous</p>
+              <p className="ml-3 text-sm font-roboto text-white">{username}</p>
               <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor ml-4" />
             </button>
           </div>
