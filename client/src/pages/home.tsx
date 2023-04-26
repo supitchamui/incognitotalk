@@ -2,6 +2,7 @@ import { useState } from "react";
 import io from "socket.io-client";
 import Image from "next/image";
 import Sidebar from "./Left-Sidebar/sidebar";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const URL = process.env.NEXT_PUBLIC_URL ?? "";
 const socket = io(URL, { transports: ["websocket"] });
@@ -56,10 +57,16 @@ const Home = () => {
                 INCOGNITOTALK
               </p>
             </div>
-            <div className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3">
+
+            <button
+              type="button"
+              name="all-chats"
+              className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3"
+            >
               <Image src="/Frame_8.png" alt="" width={50} height={50}></Image>
               <p className="ml-3 text-sm font-roboto text-white">Anonymous</p>
-            </div>
+              <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor ml-4" />
+            </button>
           </div>
         </div>
         <div className="flex-1 flex-row flex">
