@@ -7,18 +7,32 @@ import { io } from "socket.io-client";
 const URL = process.env.NEXT_PUBLIC_URL ?? "";
 export const socket = io(URL, { transports: ["websocket"] });
 
+const validateUsername = (username: string) => {
+  // Check if the input contains only alphanumeric characters and does not exceed 10 characters
+  return /^[A-Za-z0-9]{1,10}$/.test(username);
+};
+
 const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
+  const [warning, setWarning] = useState<string>("");
+
   const handleLogin = (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
-    console.log(username);
-    console.log("login");
-    if (username) {
-      socket.emit("register", {
-        username: username,
-      });
-      router.push({ pathname: "/home", query: { username: username } });
+    if (validateUsername(username)) {
+      console.log(username);
+      console.log("login");
+      if (username) {
+        socket.emit("register", {
+          username: username,
+        });
+        router.push({ pathname: "/home", query: { username: username } });
+      }
+    } else {
+      // Show warning if the username does not meet the criteria
+      setWarning(
+        "Name must contain only alphabet and number, and not exceed 10 characters."
+      );
     }
   };
 
@@ -43,6 +57,7 @@ const Login = () => {
           <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
         </button>
       </form>
+      {warning && <p className="mt-3 text-red-500">{warning}</p>}
     </div>
   );
 };
