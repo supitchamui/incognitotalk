@@ -3,6 +3,16 @@
 const users = [];
 const rooms = [];
 
+const addUser = (userId, username) => {
+  // register user if not exist
+  const index = users.findIndex((user) => user.id === userId);
+  if (index === -1) {
+    const user = { id: userId, username: username, rooms: [] };
+    users.push(user);
+  }
+  console.log(users);
+};
+
 const joinRoom = (userId, username, room) => {
   // if new room, then create room
   let roomIndex = rooms.findIndex((r) => r.room === room);
@@ -24,6 +34,8 @@ const joinRoom = (userId, username, room) => {
     users.push(user);
     rooms[roomIndex].userCount += 1;
   }
+  console.log(rooms);
+  console.log(users);
 };
 
 const leaveRoom = (username, room) => {
@@ -54,6 +66,7 @@ const getAllUsers = () => {
 };
 
 module.exports = {
+  addUser,
   joinRoom,
   leaveRoom,
   getCurrentUser,
