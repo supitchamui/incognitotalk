@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Sidebar from "./Left-Sidebar/sidebar";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -19,6 +19,9 @@ const Home = () => {
   const [room, setRoom] = useState("");
   const router = useRouter();
   const { username } = router.query;
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     socket.emit("send-message", {
       author: username,
@@ -31,6 +34,34 @@ const Home = () => {
   const handleJoinRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
     socket.emit("join-room", { username: username, room: room });
   };
+  const accountButtonRef = useRef<HTMLButtonElement | null>(null);
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node) &&
+      accountButtonRef.current &&
+      !accountButtonRef.current.contains(event.target as Node)
+    ) {
+      setDropdownVisible(false);
+    }
+  };
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    router.push("/login");
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   socket.on("message", (data) => {
     data.time = new Date(data.time);
@@ -56,14 +87,27 @@ const Home = () => {
             </div>
 
             <button
+              ref={accountButtonRef}
               type="button"
-              name="all-chats"
+              name="account"
               className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3"
+              onClick={toggleDropdown}
             >
               <Image src="/Frame_8.png" alt="" width={50} height={50}></Image>
-              <p className="ml-3 text-sm font-roboto text-white">Anonymous</p>
+              <p className="ml-3 text-sm font-roboto text-white">{username}</p>
               <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor ml-4" />
             </button>
+            {dropdownVisible && (
+              <div
+                ref={dropdownRef}
+                className="bg-fontBgColor text-white absolute mt-2 top-14 right-3 shadow-md py-2 px-7 rounded-md z-10"
+                onClick={toggleDropdown}
+              >
+                <button onClick={handleLogout} className="text-sm">
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex-1 flex-row flex">
