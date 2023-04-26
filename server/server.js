@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const http = require("http");
 const Server = require("socket.io");
-const { joinRoom, getAllUsers, leaveRoom } = require("./utils/user");
+const { joinRoom, getAllUsers, leaveRoom, addUser } = require("./utils/user");
 
 dotenv.config();
 
@@ -14,6 +14,11 @@ const io = Server(server);
 
 io.on("connection", (socket) => {
   socket.emit("userId", socket.id);
+  socket.on("register", ({ username }) => {
+    addUser(socket.id, username);
+    socket.emit("userId", socket.id);
+    console.log(socket.id);
+  });
 
   socket.on("join-room", ({ username, room }) => {
     // console.log(room);

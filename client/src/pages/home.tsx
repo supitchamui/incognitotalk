@@ -1,11 +1,10 @@
 import { useState } from "react";
-import io from "socket.io-client";
 import Image from "next/image";
 import Sidebar from "./Left-Sidebar/sidebar";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-
-const URL = process.env.NEXT_PUBLIC_URL ?? "";
-const socket = io(URL, { transports: ["websocket"] });
+import { socket } from "./login";
+import { useRouter } from "next/router";
+import { formatTime } from "@/utils/date";
 
 type Message = {
   author: string;
@@ -16,12 +15,13 @@ type Message = {
 
 const Home = () => {
   const [message, setmessage] = useState("");
-  const [id, setId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [room, setRoom] = useState("");
+  const router = useRouter();
+  const { username } = router.query;
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     socket.emit("send-message", {
-      author: id,
+      author: username,
       message: message,
       time: new Date(),
       room: room,
@@ -29,12 +29,9 @@ const Home = () => {
   };
 
   const handleJoinRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
-    socket.emit("join-room", { username: id, room: room });
+    socket.emit("join-room", { username: username, room: room });
   };
 
-  socket.on("userId", (id) => {
-    setId(id);
-  });
   socket.on("message", (data) => {
     data.time = new Date(data.time);
     if (messages.length == 0) {
