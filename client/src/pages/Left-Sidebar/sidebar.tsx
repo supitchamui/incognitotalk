@@ -1,21 +1,31 @@
+import React, { useState } from "react";
 import Chats from "./list-chat";
 import Friends from "./list-friend";
 import Groups from "./list-group";
 import SidebarMenu from "./sidebar-menu";
-import { useState } from "react";
 
-const Sidebar = () => {
+interface SidebarProps {
+  onGroupClick: (groupName: string) => void; // Update the type of onGroupClick
+  selectedGroup: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
   const [currentPage, setPage] = useState("all-chats");
 
   return (
     <>
-      <SidebarMenu setPage={setPage} />{" "}
+      <SidebarMenu setPage={setPage} />
       {(() => {
         switch (currentPage) {
           case "friends":
             return <Friends />;
           case "groups":
-            return <Groups />;
+            return (
+              <Groups
+                onGroupClick={onGroupClick}
+                selectedGroup={selectedGroup}
+              />
+            );
           case "all-chats":
             return <Chats />;
           default:
