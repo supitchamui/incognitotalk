@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { socket } from "../login";
 import Image from "next/image";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
@@ -53,7 +53,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     }
   }, [selectedGroup, username]);
 
-  const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // prevent the form from refreshing the page
     socket.emit("send-message", {
       author: username,
       message: message,
@@ -107,7 +108,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                   <p
                     className={`font-semibold ${
                       isCurrentUser
-                        ? "text-fontWhiteDarkBgColor"
+                        ? "text-right text-fontWhiteDarkBgColor"
                         : "text-gray-800"
                     }`}
                   >
@@ -122,7 +123,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                       </>
                     ) : (
                       <>
-                        <span className="text-fontWhiteDarkBgColor text-sm ml-2">
+                        <span className="text-fontWhiteDarkBgColor text-sm">
                           {m.author}
                         </span>
                         <span className="text-fontBgColor text-sm ml-2">
@@ -132,9 +133,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                     )}
                   </p>
                   <div
-                    className={` px-2 py-1 w-fit h-fit ${
+                    className={`px-2 py-1 w-fit h-fit ${
                       isCurrentUser
-                        ? "bg-purple text-fontWhiteDarkBgColor rounded-lg rounded-tr-none rounded-br-lg"
+                        ? "ml-auto bg-purple text-fontWhiteDarkBgColor rounded-lg rounded-tr-none rounded-br-lg"
                         : "bg-borderColor text-fontWhiteDarkBgColor rounded-lg rounded-bl-lg rounded-tl-none"
                     }`}
                   >
@@ -149,7 +150,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
         </div>
       </div>
       <div className="bg-bgColor h-20 w-full p-5 flex-shrink-0 flex items-center">
-        <div className="relative w-full flex-grow mr-4">
+        <form
+          onSubmit={handleSendMessage}
+          className="relative w-full flex-grow mr-4"
+        >
           <input
             className="p-2 w-full rounded-xl bg-borderColor text-fontWhiteDarkBgColor hover:border-indigo-600 h-14"
             type="text"
@@ -159,12 +163,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
           />
           <button
             className="p-2 rounded-xl bg-purple text-white hover:bg-purple-500 flex items-center absolute right-2 top-2 h-10"
-            onClick={handleSendMessage}
+            type="submit"
           >
             <span>Send</span>
             <PaperAirplaneIcon className="h-6 w-6 text-white ml-2 -rotate-45" />
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
