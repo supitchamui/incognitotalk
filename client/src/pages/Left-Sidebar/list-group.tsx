@@ -1,6 +1,29 @@
+import React from "react";
 import Image from "next/image";
 
-const Groups = () => {
+interface Group {
+  groupName: string;
+  people: number;
+}
+
+interface ChatGroupsProps {
+  onGroupClick: (groupName: string) => void;
+  selectedGroup: string;
+}
+
+const groupList: Group[] = [
+  {
+    groupName: "Someone",
+    people: 1,
+  },
+  {
+    groupName: "Someone Else",
+    people: 1,
+  },
+  // Add more group list items here
+];
+
+const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
       <div className="h-35 w-full border-b border-borderColor items-center flex justify-center flex-col">
@@ -28,19 +51,35 @@ const Groups = () => {
           </button>
         </div>
       </div>
-      <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-        <Image
-          src="/Frame_8.png"
-          alt=""
-          width={75}
-          height={50}
-          className="ml-6"
-        ></Image>
-        <div className="font-roboto ml-6 flex">
-          <p className="text-white text-xl mr-2">Someone</p>
-          <p className="text-fontBgColor text-base mt-0.5 text-purple">(1)</p>
+      {groupList.map((group, index) => (
+        <div
+          key={index}
+          className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
+            group.groupName === selectedGroup ? "bg-purple-400" : ""
+          }`}
+          onClick={() => {
+            onGroupClick(group.groupName);
+            console.log(group.groupName);
+          }}
+        >
+          <Image
+            src="/Frame_8.png"
+            alt=""
+            width={75}
+            height={50}
+            className="ml-6"
+          ></Image>
+          <div className="font-roboto ml-6">
+            <p
+              className={`text-white text-xl ${
+                group.groupName === selectedGroup ? "font-bold" : ""
+              }`}
+            >
+              {`${group.groupName} (${group.people})`}
+            </p>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 };

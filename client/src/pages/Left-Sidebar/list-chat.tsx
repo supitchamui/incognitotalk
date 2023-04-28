@@ -1,4 +1,23 @@
+import React from "react";
 import Image from "next/image";
+
+interface Chat {
+  name: string;
+  message: string;
+}
+
+const chatList: Chat[] = [
+  {
+    name: "Someone",
+    message: "Past Message",
+  },
+  {
+    name: "Someone Else",
+    message: "Another Past Message",
+  },
+  // Add more chat items here
+];
+
 const Chats = () => {
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
@@ -12,32 +31,27 @@ const Chats = () => {
           />
         </div>
       </div>
-      <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-        <Image
-          src="/Frame_8.png"
-          alt=""
-          width={75}
-          height={50}
-          className="ml-6"
-        ></Image>
-        <div className="font-roboto ml-6">
-          <p className="text-white text-xl">Someone</p>
-          <p className="text-fontBgColor text-base mt-2">Past Message</p>
+      {chatList.map((chat, index) => (
+        <div
+          key={index}
+          className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer bg-blue-400}`}
+          onClick={() => {
+            console.log(chat.name);
+          }}
+        >
+          <Image
+            src="/Frame_8.png"
+            alt=""
+            width={75}
+            height={50}
+            className="ml-6"
+          ></Image>
+          <div className="font-roboto ml-6">
+            <p className={`text-white text-xl mt-2 font-bold}`}>{chat.name}</p>
+            <p className={`text-fontBgColor text-base mt-2}`}>{chat.message}</p>
+          </div>
         </div>
-      </div>
-      <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-        <Image
-          src="/Frame_8.png"
-          alt=""
-          width={75}
-          height={50}
-          className="ml-6"
-        ></Image>
-        <div className="font-roboto ml-6">
-          <p className="text-white text-xl">Someone</p>
-          <p className="text-fontBgColor text-base mt-2">Past Message</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
