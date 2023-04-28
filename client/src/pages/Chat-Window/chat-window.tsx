@@ -4,8 +4,9 @@ import Image from "next/image";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
+import { formatTime } from "@/utils/date";
 
-type Message = {
+export type Message = {
   author: string;
   message: string;
   time: Date;
@@ -50,8 +51,34 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     if (selectedGroup) {
       setRoom(selectedGroup);
       socket.emit("join-room", { username: username, room: selectedGroup });
+      socket.emit("get-all-rooms");
+      socket.emit("get-past-messages", { room: selectedGroup });
     }
   }, [selectedGroup, username]);
+
+  useEffect(() => {
+    const handlePastMessages = (data: Message[]) => {
+      console.log(data);
+      data.map((m) => {
+        m.time = new Date(m.time);
+      });
+      setMessages((prevMessages) => {
+        // Set past messages after join room first time
+        if (!prevMessages[room]) {
+          return {
+            ...prevMessages,
+            [room]: data,
+          };
+        } else {
+          return { ...prevMessages };
+        }
+      });
+    };
+    socket.on("past-messages", handlePastMessages);
+    return () => {
+      socket.off("past-messages", handlePastMessages);
+    };
+  }, [room]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent the form from refreshing the page
@@ -115,7 +142,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                     {isCurrentUser ? (
                       <>
                         <span className="text-fontBgColor text-sm ml-2">
-                          {new Date(m.time).toLocaleTimeString()}
+                          {formatTime(m.time)}
                         </span>
                         <span className="text-fontWhiteDarkBgColor text-sm ml-2">
                           {m.author}
@@ -127,7 +154,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                           {m.author}
                         </span>
                         <span className="text-fontBgColor text-sm ml-2">
-                          {new Date(m.time).toLocaleTimeString()}
+                          {formatTime(m.time)}
                         </span>
                       </>
                     )}

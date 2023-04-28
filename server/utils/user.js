@@ -1,7 +1,9 @@
 // user = {userId, username, list of rooms}
-// room = {room, count total user in the room}
+// room = {room, count total user in the room, latest message}
+// message = {author, message, time, room}
 const users = [];
 const rooms = [];
+const messages = [];
 
 const addUser = (userId, username) => {
   // register user if not exist
@@ -16,18 +18,20 @@ const addUser = (userId, username) => {
 const joinRoom = (userId, username, room) => {
   // if new room, then create room
   let roomIndex = rooms.findIndex((r) => r.room === room);
-  if (roomIndex === -1) {
-    rooms.push({ room: room, userCount: 0 });
+  let newRoom = roomIndex === -1;
+  if (newRoom) {
+    rooms.push({ room: room, userCount: 0, latestMessage: "" });
   }
   roomIndex = rooms.findIndex((r) => r.room === room);
 
   // register user into the room and add room user count
-  const index = users.findIndex((user) => user.id === userId);
+  const index = users.findIndex((user) => user.username === username);
   if (index !== -1) {
     const userRoomIndex = users[index].rooms.findIndex((r) => r === room);
     if (userRoomIndex === -1) {
       users[index].rooms.push(room);
       rooms[roomIndex].userCount += 1;
+      newRoom = true;
     }
   } else {
     const user = { id: userId, username: username, rooms: [room] };
@@ -36,6 +40,7 @@ const joinRoom = (userId, username, room) => {
   }
   console.log(rooms);
   console.log(users);
+  return newRoom;
 };
 
 const leaveRoom = (username, room) => {
@@ -65,10 +70,44 @@ const getAllUsers = () => {
   return users;
 };
 
+const getAllRooms = () => {
+  return rooms;
+};
+
+const updateLatestMessage = (message) => {
+  const index = rooms.findIndex((r) => r.room === message.room);
+  if (index != -1) {
+    rooms[index].latestMessage = message;
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const sendMessage = (message) => {
+  let done = false;
+  if (message) {
+    messages.push(message);
+    done = updateLatestMessage(message);
+  }
+  console.log(messages);
+  console.log(rooms);
+  return done;
+};
+
+const getMessageInRoom = (room) => {
+  const msg = messages.filter((m) => m.room === room);
+  console.log(msg);
+  return msg;
+};
+
 module.exports = {
   addUser,
   joinRoom,
   leaveRoom,
   getCurrentUser,
   getAllUsers,
+  getAllRooms,
+  sendMessage,
+  getMessageInRoom,
 };
