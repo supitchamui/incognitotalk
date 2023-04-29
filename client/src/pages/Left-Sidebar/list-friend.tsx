@@ -1,5 +1,34 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { socket } from "../login";
+import { useRouter } from "next/router";
+
 const Friends = () => {
+  const [friendList, setFriendList] = useState<string[]>([]);
+  const router = useRouter();
+  const { username } = router.query;
+
+  useEffect(() => {
+    socket.emit("get-all-users");
+  }, []);
+
+  useEffect(() => {
+    const friendListener = (data: string[]) => {
+      const allUsers = data;
+      if (username !== undefined && typeof username === "string") {
+        const currentUser = data.indexOf(username);
+        if (currentUser !== -1) {
+          allUsers.splice(currentUser, 1);
+        }
+      }
+      setFriendList(data);
+    };
+    socket.on("users", friendListener);
+    return () => {
+      socket.off("users", friendListener);
+    };
+  }, [username]);
+
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
       <div className="h-28 w-full border-b border-borderColor items-center flex justify-center">
@@ -12,30 +41,25 @@ const Friends = () => {
           />
         </div>
       </div>
-      <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-        <Image
-          src="/Frame_8.png"
-          alt=""
-          width={75}
-          height={50}
-          className="ml-6"
-        ></Image>
-        <div className="font-roboto ml-6">
-          <p className="text-white text-xl">Someone1</p>
-        </div>
-      </div>
-      <div className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer">
-        <Image
-          src="/Frame_8.png"
-          alt=""
-          width={75}
-          height={50}
-          className="ml-6"
-        ></Image>
-        <div className="font-roboto ml-6">
-          <p className="text-white text-xl">Someone2</p>
-        </div>
-      </div>
+      {friendList.map((friend, index) => {
+        return (
+          <div
+            className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer"
+            key={index}
+          >
+            <Image
+              src="/Frame_8.png"
+              alt=""
+              width={75}
+              height={50}
+              className="ml-6"
+            ></Image>
+            <div className="font-roboto ml-6">
+              <p className="text-white text-xl">{friend}</p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
