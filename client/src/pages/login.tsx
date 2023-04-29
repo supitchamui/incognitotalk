@@ -25,6 +25,7 @@ const Login = () => {
           username: username,
         });
         router.push({ pathname: "/home", query: { username: username } });
+        socket.emit("get-all-users");
       }
     } else {
       // Show warning if the username does not meet the criteria

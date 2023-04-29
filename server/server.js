@@ -11,6 +11,7 @@ const {
   getAllRooms,
   sendMessage,
   getMessageInRoom,
+  getUserRooms,
 } = require("./utils/user");
 
 dotenv.config();
@@ -53,9 +54,15 @@ io.on("connection", (socket) => {
     io.emit("users", users);
   });
 
-  socket.on("get-all-rooms", () => {
-    const rooms = getAllRooms();
+  socket.on("get-all-rooms", (private) => {
+    const getPrivate = !(private === undefined);
+    const rooms = getAllRooms(getPrivate);
     io.emit("rooms", rooms);
+  });
+
+  socket.on("get-user-rooms", ({ username }) => {
+    const rooms = getUserRooms(username);
+    io.to(socket.id).emit("user-rooms", rooms);
   });
 
   socket.on("leave-room", ({ username, room }) => {

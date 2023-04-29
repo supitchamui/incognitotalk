@@ -15,10 +15,11 @@ interface ChatGroupsProps {
   selectedGroup: string;
 }
 
-type RoomDetails = {
+export type RoomDetails = {
   room: string;
   userCount: number;
   latestMessage: Message;
+  private: boolean;
 };
 
 const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
