@@ -101,15 +101,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
           </div>
         </div>
       </div>
-      <div className="bg-bgColor h-full w-full pt-8 px-8 flex-grow overflow-auto">
-        <div className="text-fontWhiteDarkBgColor pl-10">
+      <div className="bg-bgColor h-full w-full pt-8 px-8 flex-grow overflow-y-auto">
+        <div>
           {(messages[selectedGroup] || []).map((m, index) => {
             const isCurrentUser = m.author === username;
             return (
               <div
                 key={index}
                 className={`flex items-start mb-2 ${
-                  isCurrentUser ? "flex-row-reverse" : "flex-row -ml-12"
+                  isCurrentUser ? "flex-row-reverse" : "flex-row -ml-4"
                 }`}
               >
                 <Image

@@ -75,7 +75,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
 
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
-      <div className="h-35 w-full border-b border-borderColor items-center flex justify-center flex-col">
+      <div className="h-[20%] w-full border-b border-borderColor items-center flex justify-center flex-col">
         <form
           className="w-4/5 flex items-center relative mt-4"
           onSubmit={handleSearch}
@@ -110,41 +110,45 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
           </button>
         </form>
       </div>
-      {filteredGroups.length === 0 ? (
-        <div className="w-full justify-center items-center flex mt-10">
-          <p className="text-xl font-roboto text-white opacity-40">No Group Ja </p>
-        </div>
-      ) : (
-        filteredGroups.map((group, index) => (
-          <div
-            key={index}
-            className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
-              group.groupName === selectedGroup ? "bg-purple-400" : ""
-            }`}
-            onClick={() => {
-              onGroupClick(group.groupName);
-              console.log(group.groupName);
-            }}
-          >
-            <Image
-              src="/Frame_8.png"
-              alt=""
-              width={75}
-              height={50}
-              className="ml-6"
-            ></Image>
-            <div className="font-roboto ml-6">
-              <p
-                className={`text-white text-xl ${
-                  group.groupName === selectedGroup ? "font-bold" : ""
-                }`}
-              >
-                {`${group.groupName} (${group.people})`}
-              </p>
-            </div>
+      <div className="h-[80%] overflow-y-auto">
+        {filteredGroups.length === 0 ? (
+          <div className="w-full justify-center items-center flex mt-10">
+            <p className="text-xl font-roboto text-white opacity-40">
+              No Group Ja{" "}
+            </p>
           </div>
-        ))
-      )}
+        ) : (
+          filteredGroups.map((group, index) => (
+            <div
+              key={index}
+              className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
+                group.groupName === selectedGroup ? "bg-purple-400" : ""
+              }`}
+              onClick={() => {
+                onGroupClick(group.groupName);
+                console.log(group.groupName);
+              }}
+            >
+              <Image
+                src="/Frame_8.png"
+                alt=""
+                width={75}
+                height={50}
+                className="ml-6"
+              ></Image>
+              <div className="font-roboto ml-6">
+                <p
+                  className={`text-white text-xl ${
+                    group.groupName === selectedGroup ? "font-bold" : ""
+                  }`}
+                >
+                  {`${group.groupName} (${group.people})`}
+                </p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
