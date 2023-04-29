@@ -1,24 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { socket } from "../login";
+import { RoomDetails } from "./list-group";
+import { getFriendName } from "@/utils/private_chat";
 
 interface Chat {
   name: string;
   message: string;
 }
 
-const chatList: Chat[] = [
-  {
-    name: "Someone",
-    message: "Past Message",
-  },
-  {
-    name: "Someone Else",
-    message: "Another Past Message",
-  },
-  // Add more chat items here
-];
-
 const Chats = () => {
+  const [chatList, setChatList] = useState<Chat[]>([]);
+  const router = useRouter();
+  const { username } = router.query;
+
+  useEffect(() => {
+    socket.emit("get-user-rooms", { username: username });
+  }, [username]);
+
+  useEffect(() => {
+    const chatListener = (data: RoomDetails[]) => {
+      const chats: Chat[] = [];
+      data.map((room) => {
+        let chatName = "";
+        if (room.private) {
+          chatName =
+            username !== undefined && typeof username === "string"
+              ? getFriendName(username, room.room)
+              : "";
+        } else {
+          chatName = `${room.room} (${room.userCount})`;
+        }
+        const chat: Chat = {
+          name: chatName,
+          message: room.latestMessage.message,
+        };
+        chats.push(chat);
+      });
+      setChatList(chats);
+    };
+    socket.on("user-rooms", chatListener);
+
+    return () => {
+      socket.off("user-rooms", chatListener);
+    };
+  }, [username]);
+
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
       <div className="h-28 w-full border-b border-borderColor items-center flex justify-center">
