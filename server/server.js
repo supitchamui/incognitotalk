@@ -28,12 +28,10 @@ io.on("connection", (socket) => {
     // console.log(socket.id);
   });
 
-  socket.on("join-room", ({ username, room }) => {
+  socket.on("join-room", ({ username, room, private }) => {
     // console.log(room);
-    const isNew = joinRoom(socket.id, username, room);
-    if (isNew) {
-      socket.join(room);
-    }
+    joinRoom(socket.id, username, room, private);
+    socket.join(room);
   });
 
   socket.on("send-message", (message) => {

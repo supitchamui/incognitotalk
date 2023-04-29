@@ -1,5 +1,5 @@
-// user = {userId, username, list of rooms}
-// room = {room, count total user in the room, latest message}
+// user = {id, username, rooms}
+// room = {room, userCount, latestMessage, private}
 // message = {author, message, time, room}
 const users = [];
 const rooms = [];
@@ -7,10 +7,12 @@ const messages = [];
 
 const addUser = (userId, username) => {
   // register user if not exist
-  const index = users.findIndex((user) => user.id === userId);
+  const index = users.findIndex((user) => user.username === username);
   if (index === -1) {
     const user = { id: userId, username: username, rooms: [] };
     users.push(user);
+  } else {
+    users[index].id = userId;
   }
   console.log(users);
 };
@@ -62,8 +64,8 @@ const leaveRoom = (username, room) => {
   }
 };
 
-const getCurrentUser = (userId) => {
-  return users.find((user) => user.id === userId);
+const getCurrentUser = (username) => {
+  return users.find((user) => user.username === username);
 };
 
 const getAllUsers = () => {
