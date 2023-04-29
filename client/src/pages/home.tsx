@@ -49,7 +49,7 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className="h-screen h-full flex-col flex">
+      <div className="h-screen flex-col flex">
         <div className="bg-darkBgColor w-full h-20 items-center flex border-b border-borderColor">
           <div className="flex items-center mr-0 justify-between flex-row w-full">
             <div className="flex-row flex">

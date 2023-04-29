@@ -1,5 +1,8 @@
-import React from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
+import { socket } from "../login";
+import { Message } from "../Chat-Window/chat-window";
+import { useRouter } from "next/router";
 
 interface Group {
   groupName: string;
@@ -11,19 +14,49 @@ interface ChatGroupsProps {
   selectedGroup: string;
 }
 
-const groupList: Group[] = [
-  {
-    groupName: "Someone",
-    people: 1,
-  },
-  {
-    groupName: "Someone Else",
-    people: 1,
-  },
-  // Add more group list items here
-];
+type RoomDetails = {
+  room: string;
+  userCount: number;
+  latestMessage: Message;
+};
 
 const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
+  const [groupList, setGroupList] = useState<Group[]>([]);
+  const router = useRouter();
+  const { username } = router.query;
+
+  useEffect(() => {
+    socket.emit("get-all-rooms");
+  }, []);
+
+  useEffect(() => {
+    const groupListener = (data: RoomDetails[]) => {
+      const allGroup: Group[] = [];
+      data.map((room) => {
+        const group: Group = { groupName: room.room, people: room.userCount };
+        allGroup.push(group);
+      });
+      setGroupList(allGroup);
+    };
+
+    socket.on("rooms", groupListener);
+    return () => {
+      socket.off("rooms", groupListener);
+    };
+  }, []);
+
+  const handleCreateGroup = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const groupName = e.currentTarget.elements.namedItem(
+      "group_name"
+    ) as HTMLInputElement;
+    if (groupName) {
+      socket.emit("join-room", { username: username, room: groupName.value });
+    }
+    socket.emit("get-all-rooms");
+    groupName.value = "";
+  };
+
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
       <div className="h-35 w-full border-b border-borderColor items-center flex justify-center flex-col">
@@ -35,7 +68,10 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
             name="search_user"
           />
         </div>
-        <div className="w-11/12 items-center flex justify-center">
+        <form
+          className="w-11/12 items-center flex justify-center"
+          onSubmit={handleCreateGroup}
+        >
           <input
             type="text"
             className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-white mt-3 mb-4"
@@ -43,13 +79,13 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
             name="group_name"
           />
           <button
-            type="button"
+            type="submit"
             name="all-chats"
             className="w-20 h-12 rounded-xl text-white ml-2 bg-purple"
           >
             Create
           </button>
-        </div>
+        </form>
       </div>
       {groupList.map((group, index) => (
         <div

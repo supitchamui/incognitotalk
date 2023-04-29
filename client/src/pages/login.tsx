@@ -20,8 +20,6 @@ const Login = () => {
   const handleLogin = (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
     if (validateUsername(username)) {
-      console.log(username);
-      console.log("login");
       if (username) {
         socket.emit("register", {
           username: username,
