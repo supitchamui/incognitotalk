@@ -2,7 +2,6 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { socket } from "../login";
 import Image from "next/image";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
 
@@ -93,23 +92,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
 
   return (
     <div className="h-full w-2/3 flex flex-col">
-      <div className="h-28 w-full bg-bgColor shadow-lg flex-shrink-0">
-        <div className="container mx-auto flex items-center h-full justify-between px-4">
+      <div className="h-20 w-full bg-bgColor border-b border-borderColor flex-shrink-0">
+        <div className="container mx-auto flex justify-center items-center h-full">
           <div>
             <p className="text-3xl font-roboto text-white font-medium">
               {selectedGroup}
             </p>
-          </div>
-          <div className="w-1/2 flex items-center relative">
-            <input
-              type="text"
-              className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-fontBgColor pr-10"
-              placeholder="Search in this chat"
-              name="search_user"
-            />
-            <div className="absolute right-0 top-0 h-full w-10 text-center text-gray-400 pointer-events-none flex items-center justify-center">
-              <MagnifyingGlassIcon className="h-6 w-6 text-fontBgColor" />
-            </div>
           </div>
         </div>
       </div>

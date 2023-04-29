@@ -14,7 +14,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
 
   return (
     <>
-      <SidebarMenu setPage={setPage} />
+      <SidebarMenu setPage={setPage} currentPage={currentPage}/>
       {(() => {
         switch (currentPage) {
           case "friends":
