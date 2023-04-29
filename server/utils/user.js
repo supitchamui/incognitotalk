@@ -17,12 +17,21 @@ const addUser = (userId, username) => {
   console.log(users);
 };
 
-const joinRoom = (userId, username, room) => {
+const joinRoom = (userId, username, room, private) => {
   // if new room, then create room
   let roomIndex = rooms.findIndex((r) => r.room === room);
-  let newRoom = roomIndex === -1;
-  if (newRoom) {
-    rooms.push({ room: room, userCount: 0, latestMessage: "" });
+  if (private === undefined) {
+    private = false;
+  } else {
+    private = true;
+  }
+  if (roomIndex === -1) {
+    rooms.push({
+      room: room,
+      userCount: 0,
+      latestMessage: "",
+      private: private,
+    });
   }
   roomIndex = rooms.findIndex((r) => r.room === room);
 
@@ -33,7 +42,6 @@ const joinRoom = (userId, username, room) => {
     if (userRoomIndex === -1) {
       users[index].rooms.push(room);
       rooms[roomIndex].userCount += 1;
-      newRoom = true;
     }
   } else {
     const user = { id: userId, username: username, rooms: [room] };
@@ -42,7 +50,6 @@ const joinRoom = (userId, username, room) => {
   }
   console.log(rooms);
   console.log(users);
-  return newRoom;
 };
 
 const leaveRoom = (username, room) => {
@@ -69,11 +76,30 @@ const getCurrentUser = (username) => {
 };
 
 const getAllUsers = () => {
-  return users;
+  const allUsers = users.map((user) => user.username);
+  return allUsers;
 };
 
-const getAllRooms = () => {
-  return rooms;
+const getAllRooms = (private) => {
+  const filteredRoom = rooms.filter((r) => r.private === private);
+  return filteredRoom;
+};
+
+const getUserRooms = (username) => {
+  const user = users.find((user) => user.username === username);
+  if (user) {
+    const userRooms = [];
+    if (user.rooms !== []) {
+      user.rooms.map((userRoom) => {
+        const room = rooms.find((r) => r.room === userRoom);
+        userRooms.push(room);
+      });
+    }
+    console.log(userRooms);
+    return userRooms;
+  } else {
+    return [];
+  }
 };
 
 const updateLatestMessage = (message) => {
@@ -110,6 +136,7 @@ module.exports = {
   getCurrentUser,
   getAllUsers,
   getAllRooms,
+  getUserRooms,
   sendMessage,
   getMessageInRoom,
 };
