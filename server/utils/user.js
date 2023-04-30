@@ -1,6 +1,8 @@
+const ObjectId = require("mongodb").ObjectId;
+
 // user = {id, username, rooms}
 // room = {room, userCount, latestMessage, private}
-// message = {author, message, time, room}
+// message = {id, author, message, time, room}
 const users = [];
 const rooms = [];
 const messages = [];
@@ -95,7 +97,6 @@ const getUserRooms = (username) => {
         userRooms.push(room);
       });
     }
-    console.log(userRooms);
     return userRooms;
   } else {
     return [];
@@ -113,14 +114,38 @@ const updateLatestMessage = (message) => {
 };
 
 const sendMessage = (message) => {
-  let done = false;
-  if (message) {
-    messages.push(message);
-    done = updateLatestMessage(message);
+  let m = null;
+  if (
+    message &&
+    message.message !== undefined &&
+    message.message.trim() !== ""
+  ) {
+    m = {
+      id: new ObjectId().toString(),
+      author: message.author,
+      message: message.message,
+      time: message.time,
+      room: message.room,
+      announce: false,
+    };
+    messages.push(m);
+    done = updateLatestMessage(m);
   }
   console.log(messages);
   console.log(rooms);
-  return done;
+  return m;
+};
+
+const unsendMessage = (message) => {
+  if (message) {
+    const index = messages.findIndex(
+      (m) =>
+        m.id === message.id &&
+        m.message === message.message &&
+        m.room === message.room
+    );
+    messages.splice(index, 1);
+  }
 };
 
 const getMessageInRoom = (room) => {
@@ -138,5 +163,6 @@ module.exports = {
   getAllRooms,
   getUserRooms,
   sendMessage,
+  unsendMessage,
   getMessageInRoom,
 };

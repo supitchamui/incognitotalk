@@ -10,10 +10,12 @@ import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
 
 export type Message = {
+  id: string;
   author: string;
   message: string;
   time: Date;
   room: string;
+  announce: boolean;
 };
 
 interface ChatWindowProps {
@@ -95,6 +97,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
 
   const handleUnsendMessage = () => {
     if (selectedMessageIndex !== null) {
+      socket.emit(
+        "unsend-message",
+        messages[selectedGroup][selectedMessageIndex]
+      );
+
       setMessages((prevMessages) => {
         const currentRoomMessages = prevMessages[selectedGroup] || [];
         return {
@@ -109,6 +116,32 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
       setSelectedMessageIndex(null);
     }
   };
+
+  useEffect(() => {
+    const handleRemoveMessage = (data: Message) => {
+      setMessages((prevMessages) => {
+        const currentRoomMessages = prevMessages[selectedGroup] || [];
+        const index = currentRoomMessages.findIndex(
+          (m) => m.id === data.id && m.message === data.message
+        );
+        if (index !== -1) {
+          return {
+            ...prevMessages,
+            [selectedGroup]: [
+              ...currentRoomMessages.slice(0, index),
+              ...currentRoomMessages.slice(index + 1),
+            ],
+          };
+        } else {
+          return prevMessages;
+        }
+      });
+    };
+    socket.on("remove-message", handleRemoveMessage);
+    return () => {
+      socket.off("remove-message", handleRemoveMessage);
+    };
+  }, [selectedGroup]);
 
   useEffect(() => {
     const handleNewMessage = (data: Message) => {

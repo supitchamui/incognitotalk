@@ -12,6 +12,7 @@ const {
   sendMessage,
   getMessageInRoom,
   getUserRooms,
+  unsendMessage,
 } = require("./utils/user");
 
 dotenv.config();
@@ -37,11 +38,16 @@ io.on("connection", (socket) => {
 
   socket.on("send-message", (message) => {
     // console.log(message.room);
-    const done = sendMessage(message);
-    if (done) {
-      io.to(message.room).emit("message", message);
+    const m = sendMessage(message);
+    if (m) {
+      io.to(message.room).emit("message", m);
     }
   });
+
+  socket.on("unsend-message", (message) => {
+    unsendMessage(message);
+    io.to(message.room).emit("remove-message", message);
+  })
 
   socket.on("get-past-messages", ({ room }) => {
     // console.log(room);
