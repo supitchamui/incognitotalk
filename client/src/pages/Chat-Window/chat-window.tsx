@@ -29,9 +29,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   const [selectedMessageIndex, setSelectedMessageIndex] = useState<
     number | null
   >(null);
-
   const [announcements, setAnnouncements] = useState<string[]>([]);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
+  const [showHideButton, setShowHideButton] = useState(false);
+  const [hideAnnouncements, setHideAnnouncements] = useState(false);
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -39,6 +40,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     y: 0,
     isCurrentUser: false,
   });
+
+  const handleHideAnnouncements = () => {
+    setHideAnnouncements(true);
+  };
 
   const handleContextMenu = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
@@ -60,15 +65,33 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     if (selectedMessageIndex !== null) {
       const message = messages[selectedGroup][selectedMessageIndex];
       const newAnnouncement = `${message.author}: ${message.message}`;
-      setAnnouncements((prev) => [newAnnouncement, ...prev]);
+
+      setAnnouncements((prev) => {
+        // If hiding announcements, reset the list and only show the new announcement
+        if (hideAnnouncements) {
+          setShowAnnouncements(false);
+          setShowHideButton(false);
+          return [newAnnouncement];
+        } else {
+          return [newAnnouncement, ...prev];
+        }
+      });
+
       setContextMenu({ ...contextMenu, visible: false });
-      console.log(selectedMessageIndex);
+      setHideAnnouncements(false); // Show the announcements again
     }
   };
 
   const toggleAnnouncements = () => {
     setShowAnnouncements((prev) => !prev);
+    setShowHideButton((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (showAnnouncements) {
+      setShowHideButton(true);
+    }
+  }, [showAnnouncements]);
 
   const handleUnsendMessage = () => {
     if (selectedMessageIndex !== null) {
@@ -165,32 +188,45 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
           </div>
         </div>
       </div>
+
       <div className="bg-bgColor h-full w-full flex-grow overflow-y-auto">
-        {announcements[0] != null && (
-          <div className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-[60%] fixed z-10 flex items-center justify-between">
-            <div className="flex items-center">
-              <MegaphoneIcon className="h-6 w-6 text-white-500" />
-              <p className="ml-2">{announcements[0]}</p>
-            </div>
-            <button
-              className="focus:outline-none"
-              onClick={toggleAnnouncements}
-            >
-              <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor" />
-            </button>
-            {showAnnouncements && (
-              <div className="absolute mt-2 top-14 right-0 w-[60%] z-10">
-                {announcements.map((announce, index) => (
-                  <div
-                    key={index}
-                    className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 border-b border-fontWhiteDarkBgColor"
-                  >
-                    <p className="text-sm">{announce}</p>
+        {!hideAnnouncements && (
+          <>
+            {announcements[0] != null && (
+              <div className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-[100%] sticky z-10 flex items-center justify-between">
+                <div className="flex items-center">
+                  <MegaphoneIcon className="h-6 w-6 text-white-500" />
+                  <p className="ml-2">{announcements[0]}</p>
+                </div>
+                <button
+                  className="focus:outline-none"
+                  onClick={toggleAnnouncements}
+                >
+                  <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor" />
+                </button>
+                {!hideAnnouncements && showAnnouncements && (
+                  <div className="absolute mt-2 top-14 right-0 w-[100%] z-10">
+                    {announcements.slice(1).map((announce, index) => (
+                      <div
+                        key={index}
+                        className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 border-b border-fontWhiteDarkBgColor"
+                      >
+                        <p className="text-sm">{announce}</p>
+                      </div>
+                    ))}
+                    {showHideButton && (
+                      <button
+                        className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-full text-left focus:outline-none"
+                        onClick={handleHideAnnouncements}
+                      >
+                        <p className="text-sm">Do not show again</p>
+                      </button>
+                    )}
                   </div>
-                ))}
+                )}
               </div>
             )}
-          </div>
+          </>
         )}
 
         <div>
