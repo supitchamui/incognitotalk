@@ -1,4 +1,10 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { socket } from "../login";
 import Image from "next/image";
 import {
@@ -52,9 +58,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     isCurrentUser: false,
   });
 
-  const handleHideAnnouncements = () => {
+  const handleHideAnnouncements = useCallback(() => {
     setHideAnnouncements(true);
-  };
+    messages[selectedGroup].map((m) => (m.announce = false));
+  }, [messages, selectedGroup]);
+
+  useEffect(() => {
+    socket.on("announce-removed", handleHideAnnouncements);
+    return () => {
+      socket.off("announce-removed", handleHideAnnouncements);
+    };
+  }, [handleHideAnnouncements]);
 
   const handleContextMenu = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
@@ -75,6 +89,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   const handleAnnounce = () => {
     if (selectedMessageIndex !== null) {
       const message = messages[selectedGroup][selectedMessageIndex];
+      if (message.announce) {
+        return;
+      } else {
+        message.announce = true;
+      }
+      socket.emit("announce-message", message);
       const newAnnouncement = `${message.author}: ${message.message}`;
 
       setAnnouncements((prev) => {
