@@ -1,10 +1,13 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { socket } from "../login";
 import Image from "next/image";
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import {
+  PaperAirplaneIcon,
+  MegaphoneIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
-import { MegaphoneIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 
 export type Message = {
   author: string;
@@ -26,17 +29,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   const [selectedMessageIndex, setSelectedMessageIndex] = useState<
     number | null
   >(null);
-  const [announcement, setAnnouncement] = useState<string | null>(null);
 
-  const [announcements, setAnnouncements] = useState<string[]>([]); // Add this line
-  const [showAnnouncements, setShowAnnouncements] = useState(false); // Add this line
+  const [announcements, setAnnouncements] = useState<string[]>([]);
+  const [showAnnouncements, setShowAnnouncements] = useState(false);
 
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
     isCurrentUser: false,
-    // index: -1,
   });
 
   const handleContextMenu = (e: React.MouseEvent, index: number) => {
@@ -55,20 +56,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  // const handleAnnounce = () => {
-  //   if (selectedMessageIndex !== null) {
-  //     const message = messages[selectedGroup][selectedMessageIndex];
-  //     setAnnouncement(`${message.author}: ${message.message}`);
-  //     setContextMenu({ ...contextMenu, visible: false });
-  //   }
-  // };
-
   const handleAnnounce = () => {
     if (selectedMessageIndex !== null) {
       const message = messages[selectedGroup][selectedMessageIndex];
       const newAnnouncement = `${message.author}: ${message.message}`;
       setAnnouncements((prev) => [newAnnouncement, ...prev]);
       setContextMenu({ ...contextMenu, visible: false });
+      console.log(selectedMessageIndex);
     }
   };
 
@@ -172,11 +166,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
         </div>
       </div>
       <div className="bg-bgColor h-full w-full flex-grow overflow-y-auto">
-        {announcement && (
+        {announcements[0] != null && (
           <div className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-[60%] fixed z-10 flex items-center justify-between">
             <div className="flex items-center">
               <MegaphoneIcon className="h-6 w-6 text-white-500" />
-              <p className="ml-2">{announcement}</p>
+              <p className="ml-2">{announcements[0]}</p>
             </div>
             <button
               className="focus:outline-none"
@@ -184,7 +178,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
             >
               <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor" />
             </button>
-            {/* {showAnnouncements && (
+            {showAnnouncements && (
               <div className="absolute mt-2 top-14 right-0 w-[60%] z-10">
                 {announcements.map((announce, index) => (
                   <div
@@ -195,7 +189,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                   </div>
                 ))}
               </div>
-            )} */}
+            )}
           </div>
         )}
 
