@@ -1,9 +1,10 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { socket } from "../login";
 import Image from "next/image";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
+import hashString from "@/utils/hashString";
 
 export type Message = {
   author: string;
@@ -26,12 +27,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
   const router = useRouter();
   const { username } = router.query;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     const handleNewMessage = (data: Message) => {
       console.log(data);
       data.time = new Date(data.time);
-      if (data.message != "") {
+      if (data.message.trim() != "") {
         setMessages((prevMessages) => {
           const currentRoomMessages = prevMessages[data.room] || [];
           return {
@@ -93,12 +101,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent the form from refreshing the page
-    socket.emit("send-message", {
-      author: username,
-      message: message,
-      time: new Date(),
-      room: room,
-    });
+    if (message.trim() != "") {
+      socket.emit("send-message", {
+        author: username,
+        message: message,
+        time: new Date(),
+        room: room,
+      });
+    } // Prevent sending empty message
     setmessage(""); // Clear the input text box
   };
 
@@ -113,19 +123,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           </div>
         </div>
       </div>
-      <div className="bg-bgColor h-full w-full pt-8 px-8 flex-grow overflow-auto">
-        <div className="text-fontWhiteDarkBgColor pl-10">
+      <div
+        className="bg-bgColor h-full w-full pt-8 px-8 flex-grow overflow-y-auto"
+        ref={messagesEndRef}
+      >
+        <div>
           {(messages[selectedGroup] || []).map((m, index) => {
             const isCurrentUser = m.author === username;
             return (
               <div
                 key={index}
                 className={`flex items-start mb-2 ${
-                  isCurrentUser ? "flex-row-reverse" : "flex-row -ml-12"
+                  isCurrentUser ? "flex-row-reverse" : "flex-row -ml-4"
                 }`}
               >
                 <Image
-                  src="/Frame_8.png"
+                  src={`/Frame_${
+                    m.author ? hashString(m.author as string) % 9 : 0
+                  }.png`}
                   alt=""
                   width={40}
                   height={40}

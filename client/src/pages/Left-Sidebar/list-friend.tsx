@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { socket } from "../login";
 import { useRouter } from "next/router";
 import { formatRoomName } from "@/utils/private_chat";
+import hashString from "@/utils/hashString";
 
 interface ChatFriendsProps {
   onGroupClick: (GroupName: string) => void;
@@ -56,7 +57,11 @@ const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
             }}
           >
             <Image
-              src="/Frame_8.png"
+              src={`/Frame_${
+                friend
+                  ? hashString(friend as string) % 9
+                  : 0
+              }.png`}
               alt=""
               width={75}
               height={50}

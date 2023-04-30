@@ -4,6 +4,7 @@ import { socket } from "../login";
 import { Message } from "../Chat-Window/chat-window";
 import { useRouter } from "next/router";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import hashString from "@/utils/hashString";
 
 interface Group {
   groupName: string;
@@ -62,6 +63,10 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
     const groupName = e.currentTarget.elements.namedItem(
       "group_name"
     ) as HTMLInputElement;
+
+    if (groupName.value.trim() === "") {
+      return;
+    }
     if (groupName) {
       socket.emit("join-room", { username: username, room: groupName.value });
     }
@@ -75,14 +80,14 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
 
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
-      <div className="h-35 w-full border-b border-borderColor items-center flex justify-center flex-col">
+      <div className="h-[20%] w-full border-b border-borderColor items-center flex justify-center flex-col">
         <form
           className="w-4/5 flex items-center relative mt-4"
           onSubmit={handleSearch}
         >
           <input
             type="text"
-            className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-fontBgColor pr-10"
+            className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-white pr-10"
             placeholder="Search"
             name="search_user"
           />
@@ -110,41 +115,49 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
           </button>
         </form>
       </div>
-      {filteredGroups.length === 0 ? (
-        <div className="w-full justify-center items-center flex mt-10">
-          <p className="text-xl font-roboto text-white opacity-40">No Group Ja </p>
-        </div>
-      ) : (
-        filteredGroups.map((group, index) => (
-          <div
-            key={index}
-            className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
-              group.groupName === selectedGroup ? "bg-purple-400" : ""
-            }`}
-            onClick={() => {
-              onGroupClick(group.groupName);
-              console.log(group.groupName);
-            }}
-          >
-            <Image
-              src="/Frame_8.png"
-              alt=""
-              width={75}
-              height={50}
-              className="ml-6"
-            ></Image>
-            <div className="font-roboto ml-6">
-              <p
-                className={`text-white text-xl ${
-                  group.groupName === selectedGroup ? "font-bold" : ""
-                }`}
-              >
-                {`${group.groupName} (${group.people})`}
-              </p>
-            </div>
+      <div className="h-[80%] overflow-y-auto">
+        {filteredGroups.length === 0 ? (
+          <div className="w-full justify-center items-center flex mt-10">
+            <p className="text-xl font-roboto text-white opacity-40">
+              No Group Ja{" "}
+            </p>
           </div>
-        ))
-      )}
+        ) : (
+          filteredGroups.map((group, index) => (
+            <div
+              key={index}
+              className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
+                group.groupName === selectedGroup ? "bg-purple-400" : ""
+              }`}
+              onClick={() => {
+                onGroupClick(group.groupName);
+                console.log(group.groupName);
+              }}
+            >
+              <Image
+                src={`/G${
+                  group.groupName
+                    ? hashString(group.groupName as string) % 9
+                    : 0
+                }.png`}
+                alt=""
+                width={75}
+                height={50}
+                className="ml-6"
+              ></Image>
+              <div className="font-roboto ml-6">
+                <p
+                  className={`text-white text-xl ${
+                    group.groupName === selectedGroup ? "font-bold" : ""
+                  }`}
+                >
+                  {`${group.groupName} (${group.people})`}
+                </p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
