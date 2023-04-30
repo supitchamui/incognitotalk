@@ -126,7 +126,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                 }`}
               >
                 <Image
-                  src={`/Frame_${hashString(m.author as string) % 9}.png`}
+                  src={`/Frame_${
+                    m.author ? hashString(m.author as string) % 9 : 0
+                  }.png`}
                   alt=""
                   width={40}
                   height={40}
