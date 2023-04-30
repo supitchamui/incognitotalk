@@ -61,6 +61,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   const handleHideAnnouncements = useCallback(() => {
     setHideAnnouncements(true);
     messages[selectedGroup].map((m) => (m.announce = false));
+    setAnnouncements([]);
+    localStorage.removeItem("announcements");
   }, [messages, selectedGroup]);
 
   useEffect(() => {
@@ -164,10 +166,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
 
   useEffect(() => {
     const storedAnnouncements = localStorage.getItem("announcements");
-    if (storedAnnouncements) {
+    if (storedAnnouncements && !hideAnnouncements) {
       setAnnouncements(JSON.parse(storedAnnouncements));
     }
-  }, []);
+  }, [hideAnnouncements]);
 
   const handleUnsendMessage = () => {
     if (selectedMessageIndex !== null) {
