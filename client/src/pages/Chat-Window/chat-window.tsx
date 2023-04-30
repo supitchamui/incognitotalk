@@ -67,8 +67,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
 
   useEffect(() => {
     socket.on("announce-removed", handleHideAnnouncements);
+
+    socket.on("disconnect", () => {
+      setAnnouncements([]);
+    });
+
     return () => {
       socket.off("announce-removed", handleHideAnnouncements);
+      socket.off("disconnect");
     };
   }, [handleHideAnnouncements]);
 
