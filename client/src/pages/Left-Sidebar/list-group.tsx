@@ -62,6 +62,10 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
     const groupName = e.currentTarget.elements.namedItem(
       "group_name"
     ) as HTMLInputElement;
+
+    if (groupName.value.trim() === "") {
+      return;
+    }
     if (groupName) {
       socket.emit("join-room", { username: username, room: groupName.value });
     }
@@ -82,7 +86,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
         >
           <input
             type="text"
-            className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-fontBgColor pr-10"
+            className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-white pr-10"
             placeholder="Search"
             name="search_user"
           />
