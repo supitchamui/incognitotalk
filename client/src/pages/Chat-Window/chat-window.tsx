@@ -278,7 +278,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
             )}
           </>
         )}
-        <div className="px-8">
+        <div className="px-8 pt-8">
           <div>
             {(messages[selectedGroup] || []).map((m, index) => {
               const isCurrentUser = m.author === username;
