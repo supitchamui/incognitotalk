@@ -94,7 +94,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
       } else {
         message.announce = true;
       }
-      socket.emit("announce-message", message);
       const newAnnouncement = `${message.author}: ${message.message}`;
 
       setAnnouncements((prev) => {
@@ -122,10 +121,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   useEffect(() => {
     const handleNewAnnounce = (data: Message) => {
       const currentRoomMessages = messages[selectedGroup] || [];
-      const message = currentRoomMessages.find(
+      const index = currentRoomMessages.findIndex(
         (m) => m.id === data.id && m.message === data.message
       );
+      const message = currentRoomMessages[index];
       if (message && !message.announce) {
+        currentRoomMessages[index].announce = true;
         const newAnnouncement = `${message.author}: ${message.message}`;
         setAnnouncements((prev) => {
           if (hideAnnouncements) {
@@ -412,7 +413,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                   </button>
                 )}
                 <button
-                  onClick={handleAnnounce}
+                  onClick={() => {
+                    if (selectedMessageIndex !== null) {
+                      const announceMessage =
+                        messages[selectedGroup][selectedMessageIndex];
+                      socket.emit("announce-message", announceMessage);
+                      handleAnnounce();
+                    }
+                  }}
                   className={`cursor-pointer text-sm p-1 block w-full text-left ${
                     contextMenu.isCurrentUser ? "mt-1" : ""
                   }`}
