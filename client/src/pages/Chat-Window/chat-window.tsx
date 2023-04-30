@@ -106,11 +106,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
           return [newAnnouncement, ...prev];
         }
       });
-
+      const newAnnouncements = hideAnnouncements
+        ? [newAnnouncement]
+        : [newAnnouncement, ...announcements];
+      localStorage.setItem("announcements", JSON.stringify(newAnnouncements));
       setContextMenu({ ...contextMenu, visible: false });
-      setHideAnnouncements(false); // Show the announcements again
+      setHideAnnouncements(false);
     }
   }, [
+    announcements,
     contextMenu,
     hideAnnouncements,
     messages,
@@ -157,6 +161,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
       setShowHideButton(true);
     }
   }, [showAnnouncements]);
+
+  useEffect(() => {
+    const storedAnnouncements = localStorage.getItem("announcements");
+    if (storedAnnouncements) {
+      setAnnouncements(JSON.parse(storedAnnouncements));
+    }
+  }, []);
 
   const handleUnsendMessage = () => {
     if (selectedMessageIndex !== null) {
