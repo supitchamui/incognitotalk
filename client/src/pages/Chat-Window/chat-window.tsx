@@ -86,7 +86,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleAnnounce = () => {
+  const handleAnnounce = useCallback(() => {
     if (selectedMessageIndex !== null) {
       const message = messages[selectedGroup][selectedMessageIndex];
       if (message.announce) {
@@ -111,7 +111,40 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
       setContextMenu({ ...contextMenu, visible: false });
       setHideAnnouncements(false); // Show the announcements again
     }
-  };
+  }, [
+    contextMenu,
+    hideAnnouncements,
+    messages,
+    selectedGroup,
+    selectedMessageIndex,
+  ]);
+
+  useEffect(() => {
+    const handleNewAnnounce = (data: Message) => {
+      const currentRoomMessages = messages[selectedGroup] || [];
+      const message = currentRoomMessages.find(
+        (m) => m.id === data.id && m.message === data.message
+      );
+      if (message && !message.announce) {
+        const newAnnouncement = `${message.author}: ${message.message}`;
+        setAnnouncements((prev) => {
+          if (hideAnnouncements) {
+            setShowAnnouncements(false);
+            setShowHideButton(false);
+            return [newAnnouncement];
+          } else {
+            return [newAnnouncement, ...prev];
+          }
+        });
+        setContextMenu({ ...contextMenu, visible: false });
+        setHideAnnouncements(false);
+      }
+    };
+    socket.on("new-announce", handleNewAnnounce);
+    return () => {
+      socket.off("new-announce", handleNewAnnounce);
+    };
+  }, [contextMenu, hideAnnouncements, messages, selectedGroup]);
 
   const toggleAnnouncements = () => {
     setShowAnnouncements((prev) => !prev);
@@ -287,7 +320,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                     {showHideButton && (
                       <button
                         className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-full text-left focus:outline-none"
-                        onClick={handleHideAnnouncements}
+                        onClick={() => {
+                          socket.emit("remove-announce", {
+                            room: selectedGroup,
+                          });
+                          handleHideAnnouncements();
+                        }}
                       >
                         <p className="text-sm">Do not show again!</p>
                       </button>
