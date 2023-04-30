@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { socket } from "../login";
 import { RoomDetails } from "./list-group";
 import { getFriendName } from "@/utils/private_chat";
+import hashString from "@/utils/hashString";
 
 interface Chat {
   name: string;
@@ -68,7 +69,11 @@ const Chats = () => {
           }}
         >
           <Image
-            src="/Frame_8.png"
+            src={`/${chat.name.includes("(") ? "G" : "Frame_"}${
+              chat.name
+                ? hashString(chat.name.split(" (")[0] as string) % 9
+                : 0
+            }.png`}
             alt=""
             width={75}
             height={50}

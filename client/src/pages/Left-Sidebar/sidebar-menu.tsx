@@ -9,7 +9,7 @@ import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
 const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
-  const [room, setRoom] = useState("");
+  const [room, setRoom] = useState("all-chats");
   return (
     <div className="bg-darkBgColor w-28 items-center flex text-white flex-col justify-end font-roboto">
       <div className="mb-8">

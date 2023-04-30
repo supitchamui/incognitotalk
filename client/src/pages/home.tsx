@@ -69,7 +69,9 @@ const Home: React.FC = () => {
             onClick={toggleDropdown}
           >
             <Image
-              src={`/Frame_${hashString(username as string) % 9}.png`}
+              src={`/Frame_${
+                username ? hashString(username as string) % 9 : 0
+              }.png`}
               alt=""
               width={50}
               height={50}

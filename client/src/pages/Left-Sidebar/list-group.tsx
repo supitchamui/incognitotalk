@@ -135,7 +135,11 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
               }}
             >
               <Image
-                src={`/G${hashString(group.groupName as string) % 9}.png`}
+                src={`/G${
+                  group.groupName
+                    ? hashString(group.groupName as string) % 9
+                    : 0
+                }.png`}
                 alt=""
                 width={75}
                 height={50}
