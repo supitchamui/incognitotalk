@@ -1,9 +1,10 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { socket } from "../login";
 import Image from "next/image";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
+import hashString from "@/utils/hashString";
 
 export type Message = {
   author: string;
@@ -22,12 +23,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
   const router = useRouter();
   const { username } = router.query;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     const handleNewMessage = (data: Message) => {
       console.log(data);
       data.time = new Date(data.time);
-      if (data.message != "") {
+      if (data.message.trim() != "") {
         setMessages((prevMessages) => {
           const currentRoomMessages = prevMessages[data.room] || [];
           return {
@@ -81,12 +89,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent the form from refreshing the page
-    socket.emit("send-message", {
-      author: username,
-      message: message,
-      time: new Date(),
-      room: room,
-    });
+    if (message.trim() != "") {
+      socket.emit("send-message", {
+        author: username,
+        message: message,
+        time: new Date(),
+        room: room,
+      });
+    } // Prevent sending empty message
     setmessage(""); // Clear the input text box
   };
 
@@ -101,7 +111,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
           </div>
         </div>
       </div>
-      <div className="bg-bgColor h-full w-full pt-8 px-8 flex-grow overflow-y-auto">
+      <div
+        className="bg-bgColor h-full w-full pt-8 px-8 flex-grow overflow-y-auto"
+        ref={messagesEndRef}
+      >
         <div>
           {(messages[selectedGroup] || []).map((m, index) => {
             const isCurrentUser = m.author === username;
@@ -113,7 +126,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                 }`}
               >
                 <Image
-                  src="/Frame_8.png"
+                  src={`/Frame_${hashString(m.author as string) % 9}.png`}
                   alt=""
                   width={40}
                   height={40}

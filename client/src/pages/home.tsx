@@ -4,6 +4,7 @@ import Sidebar from "./Left-Sidebar/sidebar";
 import ChatWindow from "./Chat-Window/chat-window";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
+import hashString from "@/utils/hashString";
 
 const Home: React.FC = () => {
   const router = useRouter();
@@ -67,7 +68,12 @@ const Home: React.FC = () => {
             className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3"
             onClick={toggleDropdown}
           >
-            <Image src="/Frame_8.png" alt="" width={50} height={50}></Image>
+            <Image
+              src={`/Frame_${hashString(username as string) % 9}.png`}
+              alt=""
+              width={50}
+              height={50}
+            ></Image>
             <p className="ml-3 text-sm font-roboto text-white">{username}</p>
             <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor ml-4" />
           </button>
