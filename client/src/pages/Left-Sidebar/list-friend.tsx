@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { socket } from "../login";
 import { useRouter } from "next/router";
+import hashString from "@/utils/hashString";
 
 const Friends = () => {
   const [friendList, setFriendList] = useState<string[]>([]);
@@ -48,7 +49,11 @@ const Friends = () => {
             key={index}
           >
             <Image
-              src="/Frame_8.png"
+              src={`/Frame_${
+                friend
+                  ? hashString(friend as string) % 9
+                  : 0
+              }.png`}
               alt=""
               width={75}
               height={50}
