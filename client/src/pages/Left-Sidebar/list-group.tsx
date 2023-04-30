@@ -4,6 +4,7 @@ import { socket } from "../login";
 import { Message } from "../Chat-Window/chat-window";
 import { useRouter } from "next/router";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import hashString from "@/utils/hashString";
 
 interface Group {
   groupName: string;
@@ -129,7 +130,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
               }}
             >
               <Image
-                src="/Frame_8.png"
+                src={`/G${hashString(group.groupName as string) % 9}.png`}
                 alt=""
                 width={75}
                 height={50}
