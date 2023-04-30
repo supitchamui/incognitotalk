@@ -1,9 +1,14 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { socket } from "../login";
 import { useRouter } from "next/router";
+import { formatRoomName } from "@/utils/private_chat";
 
-const Friends = () => {
+interface ChatFriendsProps {
+  onGroupClick: (GroupName: string) => void;
+}
+
+const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
   const [friendList, setFriendList] = useState<string[]>([]);
   const router = useRouter();
   const { username } = router.query;
@@ -46,6 +51,9 @@ const Friends = () => {
           <div
             className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer"
             key={index}
+            onClick={() => {
+              onGroupClick(formatRoomName(username as string, friend));
+            }}
           >
             <Image
               src="/Frame_8.png"

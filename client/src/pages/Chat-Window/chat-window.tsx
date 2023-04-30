@@ -14,9 +14,13 @@ export type Message = {
 
 interface ChatWindowProps {
   selectedGroup: string;
+  isPrivate: any;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({
+  selectedGroup,
+  isPrivate,
+}) => {
   const [room, setRoom] = useState("public");
   const [message, setmessage] = useState("");
   const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
@@ -49,7 +53,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   useEffect(() => {
     if (selectedGroup) {
       setRoom(selectedGroup);
-      socket.emit("join-room", { username: username, room: selectedGroup });
+      if (isPrivate == undefined) {
+        socket.emit("join-room", { username: username, room: selectedGroup });
+      } else {
+        socket.emit("join-room", {
+          username: username,
+          room: selectedGroup,
+          private: isPrivate,
+        });
+      }
       socket.emit("get-all-rooms");
       socket.emit("get-past-messages", { room: selectedGroup });
     }
