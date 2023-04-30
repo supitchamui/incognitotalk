@@ -13,6 +13,8 @@ const {
   getMessageInRoom,
   getUserRooms,
   unsendMessage,
+  announceMessage,
+  removeAnnounce,
 } = require("./utils/user");
 
 dotenv.config();
@@ -47,7 +49,17 @@ io.on("connection", (socket) => {
   socket.on("unsend-message", (message) => {
     unsendMessage(message);
     io.to(message.room).emit("remove-message", message);
-  })
+  });
+
+  socket.on("announce-message", (message) => {
+    announceMessage(message);
+    io.to(message.room).emit("new-announce", message);
+  });
+
+  socket.on("remove-announce", ({ room }) => {
+    removeAnnounce(room);
+    io.to(room).emit("announce-removed");
+  });
 
   socket.on("get-past-messages", ({ room }) => {
     // console.log(room);

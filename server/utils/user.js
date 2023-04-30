@@ -148,6 +148,20 @@ const unsendMessage = (message) => {
   }
 };
 
+const announceMessage = (message) => {
+  if (message) {
+    const index = messages.findIndex(
+      (m) => m.id === message.id && m.message === message.message
+    );
+    messages[index].announce = true;
+  }
+};
+
+const removeAnnounce = (room) => {
+  const roomMessages = messages.filter((m) => m.room === room);
+  roomMessages.map((m) => (m.announce = false));
+};
+
 const getMessageInRoom = (room) => {
   const msg = messages.filter((m) => m.room === room);
   console.log(msg);
@@ -164,5 +178,7 @@ module.exports = {
   getUserRooms,
   sendMessage,
   unsendMessage,
+  announceMessage,
+  removeAnnounce,
   getMessageInRoom,
 };
