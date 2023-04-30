@@ -193,25 +193,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
         {!hideAnnouncements && (
           <>
             {announcements[0] != null && (
-              <div className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-[100%] sticky z-10 flex items-center justify-between">
-                <div className="flex items-center">
-                  <MegaphoneIcon className="h-6 w-6 text-white-500" />
-                  <p className="ml-2">{announcements[0]}</p>
+              <div className="bg-fontBgColor text-fontWhiteDarkBgColor w-[100%] sticky top-0 z-10">
+                <div className="py-2 px-4 flex items-center justify-between border-b border-fontWhiteDarkBgColor">
+                  <div className="flex items-center">
+                    <MegaphoneIcon className="h-6 w-6 text-white-500" />
+                    <p className="ml-2">{announcements[0]}</p>
+                  </div>
+                  <button
+                    className="focus:outline-none"
+                    onClick={toggleAnnouncements}
+                  >
+                    <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor" />
+                  </button>
                 </div>
-                <button
-                  className="focus:outline-none"
-                  onClick={toggleAnnouncements}
-                >
-                  <ChevronDownIcon className="h-4 w-4 text-fontWhiteDarkBgColor" />
-                </button>
                 {!hideAnnouncements && showAnnouncements && (
-                  <div className="absolute mt-2 top-14 right-0 w-[100%] z-10">
+                  <div className="absolute mt-2 top-[80%] right-0 w-[100%] z-10 border-fontWhiteDarkBgColor">
                     {announcements.slice(1).map((announce, index) => (
                       <div
                         key={index}
-                        className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 border-b border-fontWhiteDarkBgColor"
+                        className="flex items-center bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 border-b border-fontWhiteDarkBgColor"
                       >
-                        <p className="text-sm">{announce}</p>
+                        <MegaphoneIcon className="h-6 w-6 text-white-500" />
+                        <p className="text-sm ml-2">{announce}</p>
                       </div>
                     ))}
                     {showHideButton && (
@@ -219,7 +222,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
                         className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-full text-left focus:outline-none"
                         onClick={handleHideAnnouncements}
                       >
-                        <p className="text-sm">Do not show again</p>
+                        <p className="text-sm">Do not show again!</p>
                       </button>
                     )}
                   </div>
@@ -228,91 +231,92 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
             )}
           </>
         )}
-
-        <div>
-          {(messages[selectedGroup] || []).map((m, index) => {
-            const isCurrentUser = m.author === username;
-            return (
-              <div
-                key={index}
-                className={`flex items-start mb-2 ${
-                  isCurrentUser ? "flex-row-reverse" : "flex-row -ml-4"
-                }`}
-              >
-                <Image
-                  src="/Frame_8.png"
-                  alt=""
-                  width={40}
-                  height={40}
-                  className={"ml-2"}
-                />
-                <div className={"ml-2"}>
-                  <p
-                    className={`font-semibold ${
-                      isCurrentUser
-                        ? "text-right text-fontWhiteDarkBgColor"
-                        : "text-gray-800"
-                    }`}
-                  >
-                    {isCurrentUser ? (
-                      <>
-                        <span className="text-fontBgColor text-sm ml-2">
-                          {formatTime(m.time)}
-                        </span>
-                        <span className="text-fontWhiteDarkBgColor text-sm ml-2">
-                          {m.author}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-fontWhiteDarkBgColor text-sm">
-                          {m.author}
-                        </span>
-                        <span className="text-fontBgColor text-sm ml-2">
-                          {formatTime(m.time)}
-                        </span>
-                      </>
-                    )}
-                  </p>
-                  <div
-                    className={`px-2 py-1 w-fit h-fit ${
-                      isCurrentUser
-                        ? "ml-auto bg-purple text-fontWhiteDarkBgColor rounded-lg rounded-tr-none rounded-br-lg"
-                        : "bg-borderColor text-fontWhiteDarkBgColor rounded-lg rounded-bl-lg rounded-tl-none"
-                    }`}
-                    onContextMenu={(e) => handleContextMenu(e, index)}
-                  >
-                    <div className="break-words max-w-[20ch]">
-                      <span>{m.message}</span>
+        <div className="px-8">
+          <div>
+            {(messages[selectedGroup] || []).map((m, index) => {
+              const isCurrentUser = m.author === username;
+              return (
+                <div
+                  key={index}
+                  className={`flex items-start mb-2 ${
+                    isCurrentUser ? "flex-row-reverse" : "flex-row -ml-4"
+                  }`}
+                >
+                  <Image
+                    src="/Frame_8.png"
+                    alt=""
+                    width={40}
+                    height={40}
+                    className={"ml-2"}
+                  />
+                  <div className={"ml-2"}>
+                    <p
+                      className={`font-semibold ${
+                        isCurrentUser
+                          ? "text-right text-fontWhiteDarkBgColor"
+                          : "text-gray-800"
+                      }`}
+                    >
+                      {isCurrentUser ? (
+                        <>
+                          <span className="text-fontBgColor text-sm ml-2">
+                            {formatTime(m.time)}
+                          </span>
+                          <span className="text-fontWhiteDarkBgColor text-sm ml-2">
+                            {m.author}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-fontWhiteDarkBgColor text-sm">
+                            {m.author}
+                          </span>
+                          <span className="text-fontBgColor text-sm ml-2">
+                            {formatTime(m.time)}
+                          </span>
+                        </>
+                      )}
+                    </p>
+                    <div
+                      className={`px-2 py-1 w-fit h-fit ${
+                        isCurrentUser
+                          ? "ml-auto bg-purple text-fontWhiteDarkBgColor rounded-lg rounded-tr-none rounded-br-lg"
+                          : "bg-borderColor text-fontWhiteDarkBgColor rounded-lg rounded-bl-lg rounded-tl-none"
+                      }`}
+                      onContextMenu={(e) => handleContextMenu(e, index)}
+                    >
+                      <div className="break-words max-w-[20ch]">
+                        <span>{m.message}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-          {contextMenu.visible && (
-            <div
-              className="fixed text-fontWhiteDarkBgColor p-2 bg-fontBgColor"
-              style={{ top: contextMenu.y, left: contextMenu.x }}
-            >
-              {contextMenu.isCurrentUser && (
-                <button
-                  onClick={handleUnsendMessage}
-                  className="cursor-pointer text-sm p-1 block w-full text-left"
-                >
-                  unsend
-                </button>
-              )}
-              <button
-                onClick={handleAnnounce}
-                className={`cursor-pointer text-sm p-1 block w-full text-left ${
-                  contextMenu.isCurrentUser ? "mt-1" : ""
-                }`}
+              );
+            })}
+            {contextMenu.visible && (
+              <div
+                className="fixed text-fontWhiteDarkBgColor p-2 bg-fontBgColor"
+                style={{ top: contextMenu.y, left: contextMenu.x }}
               >
-                announce
-              </button>
-            </div>
-          )}
+                {contextMenu.isCurrentUser && (
+                  <button
+                    onClick={handleUnsendMessage}
+                    className="cursor-pointer text-sm p-1 block w-full text-left"
+                  >
+                    unsend
+                  </button>
+                )}
+                <button
+                  onClick={handleAnnounce}
+                  className={`cursor-pointer text-sm p-1 block w-full text-left ${
+                    contextMenu.isCurrentUser ? "mt-1" : ""
+                  }`}
+                >
+                  announce
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="bg-bgColor h-20 w-full p-5 flex-shrink-0 flex items-center">
