@@ -48,7 +48,7 @@ const Login = () => {
         />
         <button
           type="submit"
-          className="w-16 flex items-center justify-center h-16 w-16 bg-purple rounded-full ml-5"
+          className="flex items-center justify-center h-16 w-16 bg-purple rounded-full ml-5"
           name="Go"
         >
           <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
