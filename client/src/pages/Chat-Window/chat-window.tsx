@@ -5,6 +5,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
 import hashString from "@/utils/hashString";
+import { getFriendName } from "@/utils/private_chat";
 
 export type Message = {
   author: string;
@@ -118,7 +119,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         <div className="container mx-auto flex justify-center items-center h-full">
           <div>
             <p className="text-3xl font-roboto text-white font-medium">
-              {selectedGroup}
+              {isPrivate == undefined
+                ? selectedGroup
+                : getFriendName(username as string, selectedGroup)}
             </p>
           </div>
         </div>
