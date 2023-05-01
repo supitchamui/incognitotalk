@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { socket } from "../login";
 import { RoomDetails } from "./list-group";
-import { formatRoomName, getFriendName } from "@/utils/private_chat";
-import hashString from "@/utils/hashString";
+import { getFriendName } from "@/utils/private_chat";
+import ChatItem from "../Component/chat";
 
-interface Chat {
+export interface Chat {
   name: string;
   message: string;
   isPrivate: any;
@@ -18,9 +17,24 @@ interface allChatsProps {
 }
 
 const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
+  const [likedList, setLikedList] = useState<String[]>([]);
   const [chatList, setChatList] = useState<Chat[]>([]);
   const router = useRouter();
   const { username } = router.query;
+
+  const customSort = (a: JSX.Element, b: JSX.Element) => {
+    const aIndex = likedList.indexOf(a.props.chat.name);
+    const bIndex = likedList.indexOf(b.props.chat.name);
+    if (aIndex !== -1 && bIndex !== -1) {
+      return bIndex - aIndex;
+    } else if (aIndex !== -1) {
+      return -1;
+    } else if (bIndex !== -1) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
 
   useEffect(() => {
     socket.emit("get-user-rooms", { username: username });
@@ -70,34 +84,16 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
           />
         </div>
       </div>
-      {chatList.map((chat, index) => (
-        <div
-          key={index}
-          className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer bg-blue-400}`}
-          onClick={() => {
-            onGroupClick(
-              chat.isPrivate
-                ? formatRoomName(username as string, chat.name)
-                : chat.groupName,
-              chat.isPrivate
-            );
-          }}
-        >
-          <Image
-            src={`/${chat.name.includes("(") ? "G" : "Frame_"}${
-              chat.name ? hashString(chat.name.split(" (")[0] as string) % 9 : 0
-            }.png`}
-            alt=""
-            width={75}
-            height={50}
-            className="ml-6"
-          ></Image>
-          <div className="font-roboto ml-6">
-            <p className={`text-white text-xl mt-2 font-bold}`}>{chat.name}</p>
-            <p className={`text-fontBgColor text-base mt-2}`}>{chat.message}</p>
-          </div>
-        </div>
-      ))}
+      {chatList
+        .map((chat, index) => (
+          <ChatItem
+            key={index}
+            chat={chat}
+            setLikedList={setLikedList}
+            onGroupClick={onGroupClick}
+          />
+        ))
+        .sort(customSort)}
     </div>
   );
 };
