@@ -38,17 +38,17 @@ const Login = () => {
   return (
     <div className="flex flex-1 flex-col items-center bg-bgColor w-screen h-screen justify-center">
       <Image src="/logo.png" alt="" width={400} height={200}></Image>
-      <form className="w-1/4 mt-10 flex flex-row" onSubmit={handleLogin}>
+      <form className="w-max mt-10 flex flex-row" onSubmit={handleLogin}>
         <input
           type="text"
-          className="w-full h-16 rounded-2xl bg-borderColor pl-5 text-white"
+          className="w-80 h-16 rounded-2xl bg-borderColor pl-5 text-white"
           placeholder="Enter your name"
           name="username"
           onChange={(e) => setUsername(e.target.value)}
         />
         <button
           type="submit"
-          className="flex items-center justify-center h-16 w-16 bg-purple rounded-full ml-5"
+          className="w-18 flex items-center justify-center h-16 w-16 bg-purple rounded-full ml-5"
           name="Go"
         >
           <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
