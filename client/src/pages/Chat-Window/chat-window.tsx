@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
 import hashString from "@/utils/hashString";
+import { getFriendName } from "@/utils/private_chat";
 
 export type Message = {
   id: string;
@@ -27,9 +28,13 @@ export type Message = {
 
 interface ChatWindowProps {
   selectedGroup: string;
+  isPrivate: any;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({
+  selectedGroup,
+  isPrivate,
+}) => {
   const [room, setRoom] = useState("public");
   const [message, setmessage] = useState("");
   const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
@@ -236,11 +241,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   useEffect(() => {
     if (selectedGroup) {
       setRoom(selectedGroup);
-      socket.emit("join-room", { username: username, room: selectedGroup });
+      if (isPrivate == undefined) {
+        socket.emit("join-room", { username: username, room: selectedGroup });
+      } else {
+        socket.emit("join-room", {
+          username: username,
+          room: selectedGroup,
+          private: isPrivate,
+        });
+      }
       socket.emit("get-all-rooms");
       socket.emit("get-past-messages", { room: selectedGroup });
     }
-  }, [selectedGroup, username]);
+  }, [isPrivate, selectedGroup, username]);
 
   useEffect(() => {
     const handlePastMessages = (data: {
@@ -299,7 +312,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
         <div className="container mx-auto flex justify-center items-center h-full">
           <div>
             <p className="text-3xl font-roboto text-white font-medium">
-              {selectedGroup}
+              {isPrivate == undefined
+                ? selectedGroup
+                : getFriendName(username as string, selectedGroup)}
             </p>
           </div>
         </div>

@@ -7,18 +7,24 @@ import SidebarMenu from "./sidebar-menu";
 interface SidebarProps {
   onGroupClick: (groupName: string) => void; // Update the type of onGroupClick
   selectedGroup: string;
+  isPrivate: (isPrivate: any) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  onGroupClick,
+  selectedGroup,
+  isPrivate,
+}) => {
   const [currentPage, setPage] = useState("all-chats");
 
   return (
     <>
-      <SidebarMenu setPage={setPage} currentPage={currentPage}/>
+      <SidebarMenu setPage={setPage} currentPage={currentPage} />
       {(() => {
         switch (currentPage) {
           case "friends":
-            return <Friends />;
+            isPrivate(true);
+            return <Friends onGroupClick={onGroupClick} />;
           case "groups":
             return (
               <Groups
