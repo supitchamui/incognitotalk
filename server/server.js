@@ -58,13 +58,13 @@ io.on("connection", (socket) => {
 
   socket.on("remove-announce", ({ room }) => {
     removeAnnounce(room);
-    io.to(room).emit("announce-removed");
+    io.to(room).emit("announce-removed", room);
   });
 
   socket.on("get-past-messages", ({ room }) => {
     // console.log(room);
     const past_messages = getMessageInRoom(room);
-    io.to(room).emit("past-messages", past_messages);
+    io.to(room).emit("past-messages", { room: room, messages: past_messages });
   });
 
   socket.on("get-all-users", () => {

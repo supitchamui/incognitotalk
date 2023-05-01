@@ -64,11 +64,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   }, [messages, selectedGroup]);
 
   useEffect(() => {
-    socket.on("announce-removed", handleHideAnnouncements);
+    socket.on("announce-removed", (room) => {
+      if (room == selectedGroup) {
+        handleHideAnnouncements();
+      }
+    });
     return () => {
-      socket.off("announce-removed", handleHideAnnouncements);
+      socket.off("announce-removed");
     };
-  }, [handleHideAnnouncements]);
+  }, [handleHideAnnouncements, selectedGroup]);
 
   const handleContextMenu = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
@@ -239,34 +243,36 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   }, [selectedGroup, username]);
 
   useEffect(() => {
-    const handlePastMessages = (data: Message[]) => {
-      const allAnnouncements: string[] = [];
-      let messageRoom = "";
-      data.map((m) => {
-        m.time = new Date(m.time);
-        messageRoom = m.room;
-        if (m.announce) {
-          const newAnnouncement = `${m.author}: ${m.message}`;
-          allAnnouncements.push(newAnnouncement);
-        }
-      });
-      if (messageRoom === selectedGroup) {
+    const handlePastMessages = (data: {
+      room: string;
+      messages: Message[];
+    }) => {
+      console.log(data);
+      if (data.room === selectedGroup) {
+        const allAnnouncements: string[] = [];
+        data.messages.map((m) => {
+          m.time = new Date(m.time);
+          if (m.announce) {
+            const newAnnouncement = `${m.author}: ${m.message}`;
+            allAnnouncements.push(newAnnouncement);
+          }
+        });
         setShowAnnouncements(false);
         setShowHideButton(false);
         setAnnouncements(allAnnouncements);
         setHideAnnouncements(false);
+        setMessages((prevMessages) => {
+          // Set past messages after join room first time
+          if (!prevMessages[room]) {
+            return {
+              ...prevMessages,
+              [room]: data.messages,
+            };
+          } else {
+            return { ...prevMessages };
+          }
+        });
       }
-      setMessages((prevMessages) => {
-        // Set past messages after join room first time
-        if (!prevMessages[room]) {
-          return {
-            ...prevMessages,
-            [room]: data,
-          };
-        } else {
-          return { ...prevMessages };
-        }
-      });
     };
     socket.on("past-messages", handlePastMessages);
     return () => {

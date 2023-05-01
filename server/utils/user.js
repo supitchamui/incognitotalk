@@ -153,7 +153,9 @@ const announceMessage = (message) => {
     const index = messages.findIndex(
       (m) => m.id === message.id && m.message === message.message
     );
-    messages[index].announce = true;
+    if (index !== -1) {
+      messages[index].announce = true;
+    }
   }
 };
 
