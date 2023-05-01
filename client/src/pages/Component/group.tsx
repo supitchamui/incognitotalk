@@ -19,8 +19,10 @@ const GroupItem: React.FC<GroupItemProps> = ({
   return (
     <div
       className={`h-28 w-full cursor-pointer  border-b border-borderColor items-center flex ${
-        group.groupName === selectedGroup ? "bg-purple bg-opacity-40" : ""
-      }`}
+        group.groupName === selectedGroup
+          ? "bg-purple bg-opacity-40"
+          : "hover:bg-purple hover:bg-opacity-5"
+      } transition duration-200`}
       onClick={() => {
         onGroupClick(group.groupName, false);
         console.log(group.groupName);

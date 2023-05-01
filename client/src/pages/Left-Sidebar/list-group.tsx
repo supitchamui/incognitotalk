@@ -107,7 +107,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
           <button
             type="submit"
             name="all-chats"
-            className="w-20 h-12 rounded-3xl text-white ml-2 bg-purple"
+            className="w-20 h-12 rounded-3xl text-white ml-2 bg-purple hover:bg-opacity-60 transition duration-300"
           >
             Create
           </button>

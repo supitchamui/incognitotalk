@@ -40,13 +40,15 @@ const ChatItem: React.FC<GroupItemProps> = ({
   };
 
   return (
-    <div className="h-28 w-full items-center flex cursor-pointer border-b border-borderColor">
+    <div
+      className={`h-28 w-full items-center flex cursor-pointer border-b border-borderColor ${
+        selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
+          ? "bg-purple bg-opacity-40"
+          : "hover:bg-purple hover:bg-opacity-5"
+      } transition duration-250`}
+    >
       <div
-        className={`h-28 w-full items-center flex ${
-          selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
-            ? "bg-purple bg-opacity-40"
-            : ""
-        }`}
+        className={`h-28 w-full items-center flex `}
         onClick={() => {
           const name = chat.isPrivate ? chat.name : chat.roomName;
           onGroupClick(name, chat.isPrivate);
@@ -74,13 +76,7 @@ const ChatItem: React.FC<GroupItemProps> = ({
           <p className={`text-fontBgColor text-base mt-2`}>{chat.message}</p>
         </div>
       </div>
-      <div
-        className={`ml-auto h-28 items-center flex ${
-          selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
-            ? "bg-purple bg-opacity-40"
-            : ""
-        }`}
-      >
+      <div className={`ml-auto h-28 items-center flex`}>
         {isHeartActive ? (
           <HeartIconSolid
             className="h-8 w-8 mr-6 text-purple"

@@ -3,9 +3,11 @@ type SidebarMenuProps = {
   currentPage: string;
 };
 
-import { UserGroupIcon } from "@heroicons/react/24/outline";
-import { UserIcon } from "@heroicons/react/24/outline";
-import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import {
+  ChatBubbleOvalLeftEllipsisIcon,
+  UserGroupIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import { useState } from "react";
 
 const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
@@ -18,7 +20,7 @@ const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
           name="friends"
           className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl hover:bg-bgColor ${
             room === "friends" ? "text-purple" : ""
-          }`}
+          } transition duration-250`}
           onClick={() => {
             setPage("friends");
             setRoom("friends");
@@ -35,7 +37,7 @@ const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
           name="groups"
           className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl hover:bg-bgColor ${
             room === "groups" ? "text-purple" : ""
-          }`}
+          } transition duration-250`}
           onClick={() => {
             setPage("groups");
             setRoom("groups");
@@ -53,7 +55,7 @@ const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
           name="all-chats"
           className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl hover:bg-bgColor ${
             room === "all-chats" ? "text-purple" : ""
-          }`}
+          } transition duration-250`}
           onClick={() => {
             setPage("all-chats");
             setRoom("all-chats");
