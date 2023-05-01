@@ -12,7 +12,7 @@ interface Group {
 }
 
 interface ChatGroupsProps {
-  onGroupClick: (groupName: string) => void;
+  onGroupClick: (groupName: string, isprivate: any) => void;
   selectedGroup: string;
 }
 
@@ -34,7 +34,6 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
     const searchQuery = e.currentTarget.elements.namedItem(
       "search_user"
     ) as HTMLInputElement;
-    //console.log(searchQuery.value);
     setSearchTerm(searchQuery.value);
   };
 
@@ -130,8 +129,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
                 group.groupName === selectedGroup ? "bg-purple-400" : ""
               }`}
               onClick={() => {
-                onGroupClick(group.groupName);
-                console.log(group.groupName);
+                onGroupClick(group.groupName, undefined);
               }}
             >
               <Image

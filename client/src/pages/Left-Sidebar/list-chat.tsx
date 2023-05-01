@@ -3,15 +3,21 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { socket } from "../login";
 import { RoomDetails } from "./list-group";
-import { getFriendName } from "@/utils/private_chat";
+import { formatRoomName, getFriendName } from "@/utils/private_chat";
 import hashString from "@/utils/hashString";
 
 interface Chat {
   name: string;
   message: string;
+  isPrivate: any;
+  groupName: any;
 }
 
-const Chats = () => {
+interface allChatsProps {
+  onGroupClick: (groupName: string, isprivate: any) => void;
+}
+
+const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
   const [chatList, setChatList] = useState<Chat[]>([]);
   const router = useRouter();
   const { username } = router.query;
@@ -36,6 +42,10 @@ const Chats = () => {
         const chat: Chat = {
           name: chatName,
           message: room.latestMessage.message,
+          isPrivate: room.private,
+          groupName: room.private
+            ? getFriendName(username as string, room.room)
+            : room.room,
         };
         chats.push(chat);
       });
@@ -65,14 +75,17 @@ const Chats = () => {
           key={index}
           className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer bg-blue-400}`}
           onClick={() => {
-            console.log(chat.name);
+            onGroupClick(
+              chat.isPrivate
+                ? formatRoomName(username as string, chat.name)
+                : chat.groupName,
+              chat.isPrivate
+            );
           }}
         >
           <Image
             src={`/${chat.name.includes("(") ? "G" : "Frame_"}${
-              chat.name
-                ? hashString(chat.name.split(" (")[0] as string) % 9
-                : 0
+              chat.name ? hashString(chat.name.split(" (")[0] as string) % 9 : 0
             }.png`}
             alt=""
             width={75}
