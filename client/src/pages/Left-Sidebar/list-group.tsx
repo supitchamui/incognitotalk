@@ -114,22 +114,14 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
         </form>
       </div>
       <div className="h-[80%] overflow-y-auto">
-        {filteredGroups.length === 0 ? (
-          <div className="w-full justify-center items-center flex mt-10">
-            <p className="text-xl font-roboto text-white opacity-40">
-              No Group Ja
-            </p>
-          </div>
-        ) : (
-          filteredGroups.map((group, index) => (
-            <GroupItem
-              onGroupClick={onGroupClick}
-              key={index}
-              group={group}
-              selectedGroup={selectedGroup}
-            />
-          ))
-        )}
+        {filteredGroups.map((group, index) => (
+          <GroupItem
+            onGroupClick={onGroupClick}
+            key={index}
+            group={group}
+            selectedGroup={selectedGroup}
+          />
+        ))}
       </div>
     </div>
   );
