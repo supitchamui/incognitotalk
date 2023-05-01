@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { socket } from "../login";
 import { RoomDetails } from "./list-group";
 import { getFriendName } from "@/utils/private_chat";
 import ChatItem from "../Component/chat";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export interface Chat {
   roomName: string;
@@ -20,9 +21,21 @@ interface allChatsProps {
 const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
   const [likedList, setLikedList] = useState<String[]>([]);
   const [chatList, setChatList] = useState<Chat[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const { username } = router.query;
 
+  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const searchQuery = e.currentTarget.elements.namedItem(
+      "search_user"
+    ) as HTMLInputElement;
+    setSearchTerm(searchQuery.value);
+  };
+  const filteredChats = chatList.filter((chat) => {
+    const name = chat.isPrivate ? chat.name : chat.roomName;
+    return name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
   const customSort = (a: JSX.Element, b: JSX.Element) => {
     const aIndex = likedList.indexOf(a.props.chat.name);
     const bIndex = likedList.indexOf(b.props.chat.name);
@@ -80,17 +93,23 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
       <div className="h-[20%] w-full border-b border-borderColor items-center flex justify-center">
-        <div className="w-4/5">
+        <form
+          className="w-4/5 flex items-center relative"
+          onSubmit={handleSearch}
+        >
           <input
             type="text"
-            className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-white"
+            className="w-full h-12 rounded-2xl bg-borderColor pl-5 text-white pr-10"
             placeholder="Search"
             name="search_user"
           />
-        </div>
+          <div className="absolute right-0 top-0 h-full w-10 text-center text-gray-400 pointer-events-none flex items-center justify-center">
+            <MagnifyingGlassIcon className="h-6 w-6 text-fontBgColor" />
+          </div>
+        </form>
       </div>
       <div className="h-[80%] overflow-y-auto">
-        {chatList
+        {filteredChats
           .map((chat, index) => (
             <ChatItem
               key={index}
