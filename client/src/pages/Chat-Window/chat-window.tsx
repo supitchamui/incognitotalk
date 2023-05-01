@@ -61,20 +61,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
   const handleHideAnnouncements = useCallback(() => {
     setHideAnnouncements(true);
     messages[selectedGroup].map((m) => (m.announce = false));
-    setAnnouncements([]);
-    localStorage.removeItem("announcements");
   }, [messages, selectedGroup]);
 
   useEffect(() => {
     socket.on("announce-removed", handleHideAnnouncements);
-
-    socket.on("disconnect", () => {
-      setAnnouncements([]);
-    });
-
     return () => {
       socket.off("announce-removed", handleHideAnnouncements);
-      socket.off("disconnect");
     };
   }, [handleHideAnnouncements]);
 
@@ -114,15 +106,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
           return [newAnnouncement, ...prev];
         }
       });
-      const newAnnouncements = hideAnnouncements
-        ? [newAnnouncement]
-        : [newAnnouncement, ...announcements];
-      localStorage.setItem("announcements", JSON.stringify(newAnnouncements));
+
       setContextMenu({ ...contextMenu, visible: false });
-      setHideAnnouncements(false);
+      setHideAnnouncements(false); // Show the announcements again
     }
   }, [
-    announcements,
     contextMenu,
     hideAnnouncements,
     messages,
@@ -169,13 +157,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
       setShowHideButton(true);
     }
   }, [showAnnouncements]);
-
-  useEffect(() => {
-    const storedAnnouncements = localStorage.getItem("announcements");
-    if (storedAnnouncements && !hideAnnouncements) {
-      setAnnouncements(JSON.parse(storedAnnouncements));
-    }
-  }, [hideAnnouncements]);
 
   const handleUnsendMessage = () => {
     if (selectedMessageIndex !== null) {
@@ -259,10 +240,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
 
   useEffect(() => {
     const handlePastMessages = (data: Message[]) => {
-      console.log(data);
+      const allAnnouncements: string[] = [];
+      let messageRoom = "";
       data.map((m) => {
         m.time = new Date(m.time);
+        messageRoom = m.room;
+        if (m.announce) {
+          const newAnnouncement = `${m.author}: ${m.message}`;
+          allAnnouncements.push(newAnnouncement);
+        }
       });
+      if (messageRoom === selectedGroup) {
+        setShowAnnouncements(false);
+        setShowHideButton(false);
+        setAnnouncements(allAnnouncements);
+        setHideAnnouncements(false);
+      }
       setMessages((prevMessages) => {
         // Set past messages after join room first time
         if (!prevMessages[room]) {
@@ -279,7 +272,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedGroup }) => {
     return () => {
       socket.off("past-messages", handlePastMessages);
     };
-  }, [room]);
+  }, [room, selectedGroup]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent the form from refreshing the page
