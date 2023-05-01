@@ -5,6 +5,7 @@ import { Message } from "../Chat-Window/chat-window";
 import { useRouter } from "next/router";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import hashString from "@/utils/hashString";
+import GroupItem from "../Component/group";
 
 interface Group {
   groupName: string;
@@ -119,42 +120,17 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
         {filteredGroups.length === 0 ? (
           <div className="w-full justify-center items-center flex mt-10">
             <p className="text-xl font-roboto text-white opacity-40">
-              No Group Ja{" "}
+              No Group Ja
             </p>
           </div>
         ) : (
           filteredGroups.map((group, index) => (
-            <div
+            <GroupItem
+              onGroupClick={onGroupClick}
               key={index}
-              className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
-                group.groupName === selectedGroup ? "bg-purple-400" : ""
-              }`}
-              onClick={() => {
-                onGroupClick(group.groupName);
-                console.log(group.groupName);
-              }}
-            >
-              <Image
-                src={`/G${
-                  group.groupName
-                    ? hashString(group.groupName as string) % 9
-                    : 0
-                }.png`}
-                alt=""
-                width={75}
-                height={50}
-                className="ml-6"
-              ></Image>
-              <div className="font-roboto ml-6">
-                <p
-                  className={`text-white text-xl ${
-                    group.groupName === selectedGroup ? "font-bold" : ""
-                  }`}
-                >
-                  {`${group.groupName} (${group.people})`}
-                </p>
-              </div>
-            </div>
+              group={group}
+              selectedGroup={selectedGroup}
+            />
           ))
         )}
       </div>
