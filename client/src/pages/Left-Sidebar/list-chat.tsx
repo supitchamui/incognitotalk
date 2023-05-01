@@ -44,6 +44,7 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
   useEffect(() => {
     const chatListener = (data: { room: RoomDetails; pin: boolean }[]) => {
       const chats: Chat[] = [];
+      const pinList: string[] = [];
       data.map((roomDetails) => {
         let chatName = "";
         if (roomDetails.room.private) {
@@ -61,9 +62,13 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
           isPrivate: roomDetails.room.private,
           pin: roomDetails.pin,
         };
+        if (roomDetails.pin) {
+          pinList.push(chatName);
+        }
         chats.push(chat);
       });
       setChatList(chats);
+      setLikedList(pinList);
     };
     socket.on("user-rooms", chatListener);
 
