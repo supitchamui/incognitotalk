@@ -6,10 +6,11 @@ import { getFriendName } from "@/utils/private_chat";
 import ChatItem from "../Component/chat";
 
 export interface Chat {
+  roomName: string;
   name: string;
   message: string;
   isPrivate: any;
-  groupName: any;
+  pin: boolean;
 }
 
 interface allChatsProps {
@@ -41,29 +42,33 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
   }, [username]);
 
   useEffect(() => {
-    const chatListener = (data: RoomDetails[]) => {
+    const chatListener = (data: { room: RoomDetails; pin: boolean }[]) => {
       const chats: Chat[] = [];
-      data.map((room) => {
+      const pinList: string[] = [];
+      data.map((roomDetails) => {
         let chatName = "";
-        if (room.private) {
+        if (roomDetails.room.private) {
           chatName =
             username !== undefined && typeof username === "string"
-              ? getFriendName(username, room.room)
+              ? getFriendName(username, roomDetails.room.room)
               : "";
         } else {
-          chatName = `${room.room} (${room.userCount})`;
+          chatName = `${roomDetails.room.room} (${roomDetails.room.userCount})`;
         }
         const chat: Chat = {
+          roomName: roomDetails.room.room,
           name: chatName,
-          message: room.latestMessage.message,
-          isPrivate: room.private,
-          groupName: room.private
-            ? getFriendName(username as string, room.room)
-            : room.room,
+          message: roomDetails.room.latestMessage.message,
+          isPrivate: roomDetails.room.private,
+          pin: roomDetails.pin,
         };
+        if (roomDetails.pin) {
+          pinList.push(chatName);
+        }
         chats.push(chat);
       });
       setChatList(chats);
+      setLikedList(pinList);
     };
     socket.on("user-rooms", chatListener);
 

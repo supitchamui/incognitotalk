@@ -15,6 +15,7 @@ const {
   unsendMessage,
   announceMessage,
   removeAnnounce,
+  pinChat,
 } = require("./utils/user");
 
 dotenv.config();
@@ -81,6 +82,10 @@ io.on("connection", (socket) => {
   socket.on("get-user-rooms", ({ username }) => {
     const rooms = getUserRooms(username);
     io.to(socket.id).emit("user-rooms", rooms);
+  });
+
+  socket.on("pin-chat", ({ username, room, pinStatus }) => {
+    pinChat(username, room, pinStatus);
   });
 
   socket.on("leave-room", ({ username, room }) => {
