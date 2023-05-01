@@ -253,7 +253,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       socket.emit("get-all-rooms");
       socket.emit("get-past-messages", { room: selectedGroup });
     }
-  }, [selectedGroup, username]);
+  }, [isPrivate, selectedGroup, username]);
 
   useEffect(() => {
     const handlePastMessages = (data: {
