@@ -36,7 +36,7 @@ const ChatItem: React.FC<GroupItemProps> = ({
   return (
     <div className="h-28 w-full items-center flex cursor-pointer border-b border-borderColor">
       <div
-        className={`h-28 w-full items-center flex cursor-pointer bg-blue-400}`}
+        className={`h-28 w-full items-center flex bg-blue-400}`}
         onClick={() => {
           console.log(chat.name);
           const name = chat.isPrivate
