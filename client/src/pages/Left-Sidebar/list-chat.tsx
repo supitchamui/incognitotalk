@@ -16,9 +16,10 @@ export interface Chat {
 
 interface allChatsProps {
   onGroupClick: (groupName: string, isprivate: any) => void;
+  selectedGroup: string;
 }
 
-const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
+const Chats: React.FC<allChatsProps> = ({ onGroupClick, selectedGroup }) => {
   const [likedList, setLikedList] = useState<String[]>([]);
   const [chatList, setChatList] = useState<Chat[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -116,6 +117,7 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
               chat={chat}
               setLikedList={setLikedList}
               onGroupClick={onGroupClick}
+              selectedGroup={selectedGroup}
             />
           ))
           .sort(customSort)}

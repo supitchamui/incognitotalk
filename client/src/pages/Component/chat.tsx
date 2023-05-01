@@ -11,12 +11,14 @@ interface GroupItemProps {
   chat: Chat;
   setLikedList: React.Dispatch<React.SetStateAction<String[]>>;
   onGroupClick: (groupName: string, isPrivate: boolean) => void;
+  selectedGroup: string;
 }
 
 const ChatItem: React.FC<GroupItemProps> = ({
   chat,
   setLikedList,
   onGroupClick,
+  selectedGroup,
 }) => {
   const [isHeartActive, setIsHeartActive] = useState(chat.pin);
   const router = useRouter();
@@ -40,7 +42,11 @@ const ChatItem: React.FC<GroupItemProps> = ({
   return (
     <div className="h-28 w-full items-center flex cursor-pointer border-b border-borderColor">
       <div
-        className={`h-28 w-full items-center flex bg-blue-400}`}
+        className={`h-28 w-full items-center flex ${
+          selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
+            ? "bg-purple bg-opacity-40"
+            : ""
+        }`}
         onClick={() => {
           const name = chat.isPrivate ? chat.name : chat.roomName;
           onGroupClick(name, chat.isPrivate);
@@ -56,19 +62,33 @@ const ChatItem: React.FC<GroupItemProps> = ({
           className="ml-6"
         ></Image>
         <div className="font-roboto ml-6">
-          <p className={`text-white text-xl mt-2 font-bold}`}>{chat.name}</p>
-          <p className={`text-fontBgColor text-base mt-2}`}>{chat.message}</p>
+          <p
+            className={`text-white text-xl mt-2 ${
+              selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
+                ? "font-bold"
+                : ""
+            }`}
+          >
+            {chat.name}
+          </p>
+          <p className={`text-fontBgColor text-base mt-2`}>{chat.message}</p>
         </div>
       </div>
-      <div className="ml-auto mr-6">
+      <div
+        className={`ml-auto h-full items-center flex ${
+          selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
+            ? "bg-purple bg-opacity-40"
+            : ""
+        }`}
+      >
         {isHeartActive ? (
           <HeartIconSolid
-            className="h-8 w-8 text-purple "
+            className="h-8 w-8 mr-6 text-purple"
             onClick={handleHeartClick}
           />
         ) : (
           <HeartIcon
-            className="h-8 w-8 text-gray-500"
+            className="h-8 w-8 mr-6 text-gray-500"
             onClick={handleHeartClick}
           />
         )}
