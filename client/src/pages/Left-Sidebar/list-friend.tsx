@@ -2,7 +2,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { socket } from "../login";
 import { useRouter } from "next/router";
-import { formatRoomName } from "@/utils/private_chat";
 import hashString from "@/utils/hashString";
 
 interface ChatFriendsProps {
@@ -54,7 +53,7 @@ const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
               className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer"
               key={index}
               onClick={() => {
-                onGroupClick(formatRoomName(username as string, friend), true);
+                onGroupClick(friend, true);
               }}
             >
               <Image
