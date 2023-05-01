@@ -74,7 +74,7 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
 
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
-      <div className="h-28 w-full border-b border-borderColor items-center flex justify-center">
+      <div className="h-[20%] w-full border-b border-borderColor items-center flex justify-center">
         <div className="w-4/5">
           <input
             type="text"
@@ -84,16 +84,18 @@ const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
           />
         </div>
       </div>
-      {chatList
-        .map((chat, index) => (
-          <ChatItem
-            key={index}
-            chat={chat}
-            setLikedList={setLikedList}
-            onGroupClick={onGroupClick}
-          />
-        ))
-        .sort(customSort)}
+      <div className="h-[80%] overflow-y-auto">
+        {chatList
+          .map((chat, index) => (
+            <ChatItem
+              key={index}
+              chat={chat}
+              setLikedList={setLikedList}
+              onGroupClick={onGroupClick}
+            />
+          ))
+          .sort(customSort)}
+      </div>
     </div>
   );
 };
