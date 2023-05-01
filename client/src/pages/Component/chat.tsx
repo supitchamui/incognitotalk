@@ -4,8 +4,8 @@ import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { Chat } from "../Left-Sidebar/list-chat";
+import { socket } from "../login";
 import { useRouter } from "next/router";
-import { formatRoomName } from "@/utils/private_chat";
 
 interface GroupItemProps {
   chat: Chat;
@@ -18,18 +18,22 @@ const ChatItem: React.FC<GroupItemProps> = ({
   setLikedList,
   onGroupClick,
 }) => {
-  const [isHeartActive, setIsHeartActive] = useState(false);
+  const [isHeartActive, setIsHeartActive] = useState(chat.pin);
   const router = useRouter();
   const { username } = router.query;
 
   const handleHeartClick = () => {
+    socket.emit("pin-chat", {
+      username: username,
+      room: chat.roomName,
+      pinStatus: !isHeartActive,
+    });
     if (isHeartActive) {
       setIsHeartActive(false);
       setLikedList((prev) => prev.filter((item) => item !== chat.name));
     } else {
       setIsHeartActive(true);
       setLikedList((prev) => [...prev, chat.name]);
-      //console.log(chat.name);
     }
   };
 
@@ -38,10 +42,7 @@ const ChatItem: React.FC<GroupItemProps> = ({
       <div
         className={`h-28 w-full items-center flex cursor-pointer bg-blue-400}`}
         onClick={() => {
-          console.log(chat.name);
-          const name = chat.isPrivate
-            ? formatRoomName(username as string, chat.name)
-            : chat.groupName;
+          const name = chat.isPrivate ? chat.name : chat.roomName;
           onGroupClick(name, chat.isPrivate);
         }}
       >

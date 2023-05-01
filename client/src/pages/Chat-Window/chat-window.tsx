@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
 import hashString from "@/utils/hashString";
-import { getFriendName } from "@/utils/private_chat";
+import { formatRoomName } from "@/utils/private_chat";
 
 export type Message = {
   id: string;
@@ -241,17 +241,26 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   useEffect(() => {
     if (selectedGroup) {
       setRoom(selectedGroup);
-      if (isPrivate == undefined) {
-        socket.emit("join-room", { username: username, room: selectedGroup });
-      } else {
+      let roomName = "";
+      if (isPrivate) {
+        roomName = formatRoomName(username as string, selectedGroup);
         socket.emit("join-room", {
           username: username,
-          room: selectedGroup,
+          room: roomName,
           private: isPrivate,
         });
+        // auto join for other side
+        socket.emit("join-room", {
+          username: selectedGroup,
+          room: roomName,
+          private: isPrivate,
+        });
+      } else {
+        roomName = selectedGroup;
+        socket.emit("join-room", { username: username, room: selectedGroup });
       }
       socket.emit("get-all-rooms");
-      socket.emit("get-past-messages", { room: selectedGroup });
+      socket.emit("get-past-messages", { room: roomName });
     }
   }, [isPrivate, selectedGroup, username]);
 
@@ -260,8 +269,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       room: string;
       messages: Message[];
     }) => {
-      console.log(data);
-      if (data.room === selectedGroup) {
+      const roomName = isPrivate
+        ? formatRoomName(selectedGroup, username as string)
+        : selectedGroup;
+      if (data.room === roomName) {
         const allAnnouncements: string[] = [];
         data.messages.map((m) => {
           m.time = new Date(m.time);
@@ -291,16 +302,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     return () => {
       socket.off("past-messages", handlePastMessages);
     };
-  }, [room, selectedGroup]);
+  }, [isPrivate, room, selectedGroup, username]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent the form from refreshing the page
     if (message.trim() != "") {
+      const roomName = isPrivate
+        ? formatRoomName(room, username as string)
+        : room;
       socket.emit("send-message", {
         author: username,
         message: message,
         time: new Date(),
-        room: room,
+        room: roomName,
       });
     } // Prevent sending empty message
     setmessage(""); // Clear the input text box
@@ -311,9 +325,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         <div className="container mx-auto flex justify-center items-center h-full">
           <div>
             <p className="text-3xl font-roboto text-white font-medium">
-              {isPrivate == true
-                ? getFriendName(username as string, selectedGroup)
-                : selectedGroup}
+              {selectedGroup}
             </p>
           </div>
         </div>

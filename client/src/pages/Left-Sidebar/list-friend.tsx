@@ -53,7 +53,7 @@ const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
             className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer"
             key={index}
             onClick={() => {
-              onGroupClick(formatRoomName(username as string, friend), true);
+              onGroupClick(friend, true);
             }}
           >
             <Image

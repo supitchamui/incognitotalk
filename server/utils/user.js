@@ -1,6 +1,6 @@
 const ObjectId = require("mongodb").ObjectId;
 
-// user = {id, username, rooms}
+// user = {id, username, rooms: {name, pin}}
 // room = {room, userCount, latestMessage, private}
 // message = {id, author, message, time, room}
 const users = [];
@@ -40,13 +40,17 @@ const joinRoom = (userId, username, room, private) => {
   // register user into the room and add room user count
   const index = users.findIndex((user) => user.username === username);
   if (index !== -1) {
-    const userRoomIndex = users[index].rooms.findIndex((r) => r === room);
+    const userRoomIndex = users[index].rooms.findIndex((r) => r.name === room);
     if (userRoomIndex === -1) {
-      users[index].rooms.push(room);
+      users[index].rooms.push({ name: room, pin: false });
       rooms[roomIndex].userCount += 1;
     }
   } else {
-    const user = { id: userId, username: username, rooms: [room] };
+    const user = {
+      id: userId,
+      username: username,
+      rooms: [{ name: room, pin: false }],
+    };
     users.push(user);
     rooms[roomIndex].userCount += 1;
   }
@@ -93,14 +97,25 @@ const getUserRooms = (username) => {
     const userRooms = [];
     if (user.rooms !== []) {
       user.rooms.map((userRoom) => {
-        const room = rooms.find((r) => r.room === userRoom);
-        userRooms.push(room);
+        const room = rooms.find((r) => r.room === userRoom.name);
+        userRooms.push({ room: room, pin: userRoom.pin });
       });
     }
     return userRooms;
   } else {
     return [];
   }
+};
+
+const pinChat = (username, room, pinStatus) => {
+  const index = users.findIndex((user) => user.username === username);
+  if (index !== -1) {
+    const roomIndex = users[index].rooms.findIndex((r) => r.name === room);
+    if (roomIndex !== -1) {
+      users[index].rooms[roomIndex].pin = pinStatus;
+    }
+  }
+  console.log(users[index].rooms);
 };
 
 const updateLatestMessage = (message) => {
@@ -178,6 +193,7 @@ module.exports = {
   getAllUsers,
   getAllRooms,
   getUserRooms,
+  pinChat,
   sendMessage,
   unsendMessage,
   announceMessage,

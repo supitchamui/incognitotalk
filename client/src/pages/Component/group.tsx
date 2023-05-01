@@ -1,6 +1,6 @@
 import hashString from "@/utils/hashString";
 import Image from "next/image";
-import { useState } from "react";
+
 interface Group {
   groupName: string;
   people: number;
