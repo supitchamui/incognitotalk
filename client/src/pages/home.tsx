@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Sidebar from "./Left-Sidebar/sidebar";
 import ChatWindow from "./Chat-Window/chat-window";
@@ -14,13 +14,11 @@ const Home: React.FC = () => {
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("");
   const [isPrivate, setIsPrivate] = useState<any>(undefined);
-  const handleGroupClick = (groupName: string) => {
+  const handleGroupClick = (groupName: string, isprivate: any) => {
     setSelectedGroup(groupName);
     setShowChatWindow(true);
+    setIsPrivate(isprivate);
   };
-  const handleIsPrivate = (isPrivate:any)=>{
-    setIsPrivate(isPrivate);
-  }
   const accountButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -87,7 +85,6 @@ const Home: React.FC = () => {
               className="bg-fontBgColor text-white absolute mt-2 top-14 right-3 shadow-md py-2 px-7 rounded-md z-10"
               onClick={toggleDropdown}
             >
-
               <button onClick={handleLogout} className="text-sm">
                 Logout
               </button>
@@ -99,10 +96,9 @@ const Home: React.FC = () => {
         <Sidebar
           onGroupClick={handleGroupClick}
           selectedGroup={selectedGroup}
-          isPrivate={handleIsPrivate}
         />
         {showChatWindow ? (
-          <ChatWindow selectedGroup={selectedGroup} isPrivate={isPrivate}/>
+          <ChatWindow selectedGroup={selectedGroup} isPrivate={isPrivate} />
         ) : (
           <div className="bg-bgColor w-2/3">
             <div className="w-full h-full justify-center items-center flex-col flex">

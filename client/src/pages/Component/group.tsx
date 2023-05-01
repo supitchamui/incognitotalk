@@ -6,7 +6,7 @@ interface Group {
   people: number;
 }
 interface GroupItemProps {
-  onGroupClick: (groupName: string) => void;
+  onGroupClick: (groupName: string, isPrivate: boolean) => void;
   group: Group;
   selectedGroup: string;
 }
@@ -22,7 +22,7 @@ const GroupItem: React.FC<GroupItemProps> = ({
         group.groupName === selectedGroup ? "bg-purple-400" : ""
       }`}
       onClick={() => {
-        onGroupClick(group.groupName);
+        onGroupClick(group.groupName, false);
         console.log(group.groupName);
       }}
     >

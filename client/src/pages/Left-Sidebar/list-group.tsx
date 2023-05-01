@@ -1,10 +1,8 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
 import { socket } from "../login";
 import { Message } from "../Chat-Window/chat-window";
 import { useRouter } from "next/router";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import hashString from "@/utils/hashString";
 import GroupItem from "../Component/group";
 
 interface Group {
@@ -13,7 +11,7 @@ interface Group {
 }
 
 interface ChatGroupsProps {
-  onGroupClick: (groupName: string) => void;
+  onGroupClick: (groupName: string, isprivate: any) => void;
   selectedGroup: string;
 }
 
@@ -35,7 +33,6 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
     const searchQuery = e.currentTarget.elements.namedItem(
       "search_user"
     ) as HTMLInputElement;
-    //console.log(searchQuery.value);
     setSearchTerm(searchQuery.value);
   };
 

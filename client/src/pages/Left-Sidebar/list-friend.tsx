@@ -6,7 +6,7 @@ import { formatRoomName } from "@/utils/private_chat";
 import hashString from "@/utils/hashString";
 
 interface ChatFriendsProps {
-  onGroupClick: (GroupName: string) => void;
+  onGroupClick: (GroupName: string, isprivate: any) => void;
 }
 
 const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
@@ -53,14 +53,12 @@ const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
             className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer"
             key={index}
             onClick={() => {
-              onGroupClick(formatRoomName(username as string, friend));
+              onGroupClick(formatRoomName(username as string, friend), true);
             }}
           >
             <Image
               src={`/Frame_${
-                friend
-                  ? hashString(friend as string) % 9
-                  : 0
+                friend ? hashString(friend as string) % 9 : 0
               }.png`}
               alt=""
               width={75}

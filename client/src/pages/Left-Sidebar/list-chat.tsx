@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { socket } from "../login";
 import { RoomDetails } from "./list-group";
 import { getFriendName } from "@/utils/private_chat";
-import hashString from "@/utils/hashString";
 import ChatItem from "../Component/chat";
 
-interface Chat {
+export interface Chat {
   name: string;
   message: string;
+  isPrivate: any;
+  groupName: any;
 }
 
-const Chats = () => {
+interface allChatsProps {
+  onGroupClick: (groupName: string, isprivate: any) => void;
+}
+
+const Chats: React.FC<allChatsProps> = ({ onGroupClick }) => {
   const [likedList, setLikedList] = useState<String[]>([]);
   const [chatList, setChatList] = useState<Chat[]>([]);
   const router = useRouter();
@@ -52,6 +56,10 @@ const Chats = () => {
         const chat: Chat = {
           name: chatName,
           message: room.latestMessage.message,
+          isPrivate: room.private,
+          groupName: room.private
+            ? getFriendName(username as string, room.room)
+            : room.room,
         };
         chats.push(chat);
       });
@@ -78,7 +86,12 @@ const Chats = () => {
       </div>
       {chatList
         .map((chat, index) => (
-          <ChatItem key={index} chat={chat} setLikedList={setLikedList} />
+          <ChatItem
+            key={index}
+            chat={chat}
+            setLikedList={setLikedList}
+            onGroupClick={onGroupClick}
+          />
         ))
         .sort(customSort)}
     </div>

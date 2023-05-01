@@ -305,16 +305,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     } // Prevent sending empty message
     setmessage(""); // Clear the input text box
   };
-
   return (
     <div className="h-full w-2/3 flex flex-col" onClick={hideContextMenu}>
       <div className="h-20 w-full bg-bgColor border-b border-borderColor flex-shrink-0">
         <div className="container mx-auto flex justify-center items-center h-full">
           <div>
             <p className="text-3xl font-roboto text-white font-medium">
-              {isPrivate == undefined
-                ? selectedGroup
-                : getFriendName(username as string, selectedGroup)}
+              {isPrivate == true
+                ? getFriendName(username as string, selectedGroup)
+                : selectedGroup}
             </p>
           </div>
         </div>

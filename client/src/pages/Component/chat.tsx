@@ -3,19 +3,24 @@ import Image from "next/image";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useState } from "react";
-
-interface Chat {
-  name: string;
-  message: string;
-}
+import { Chat } from "../Left-Sidebar/list-chat";
+import { useRouter } from "next/router";
+import { formatRoomName } from "@/utils/private_chat";
 
 interface GroupItemProps {
   chat: Chat;
   setLikedList: React.Dispatch<React.SetStateAction<String[]>>;
+  onGroupClick: (groupName: string, isPrivate: boolean) => void;
 }
 
-const ChatItem: React.FC<GroupItemProps> = ({ chat, setLikedList }) => {
+const ChatItem: React.FC<GroupItemProps> = ({
+  chat,
+  setLikedList,
+  onGroupClick,
+}) => {
   const [isHeartActive, setIsHeartActive] = useState(false);
+  const router = useRouter();
+  const { username } = router.query;
 
   const handleHeartClick = () => {
     if (isHeartActive) {
@@ -34,6 +39,10 @@ const ChatItem: React.FC<GroupItemProps> = ({ chat, setLikedList }) => {
         className={`h-28 w-full items-center flex cursor-pointer bg-blue-400}`}
         onClick={() => {
           console.log(chat.name);
+          const name = chat.isPrivate
+            ? formatRoomName(username as string, chat.name)
+            : chat.groupName;
+          onGroupClick(name, chat.isPrivate);
         }}
       >
         <Image
