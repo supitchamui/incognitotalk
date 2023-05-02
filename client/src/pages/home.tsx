@@ -96,6 +96,7 @@ const Home: React.FC = () => {
         <Sidebar
           onGroupClick={handleGroupClick}
           selectedGroup={selectedGroup}
+          isPrivate={isPrivate}
         />
         {showChatWindow ? (
           <ChatWindow selectedGroup={selectedGroup} isPrivate={isPrivate} />

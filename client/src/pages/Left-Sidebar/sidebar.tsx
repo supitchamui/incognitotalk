@@ -7,9 +7,14 @@ import SidebarMenu from "./sidebar-menu";
 interface SidebarProps {
   onGroupClick: (groupName: string, isprivate: any) => void; // Update the type of onGroupClick
   selectedGroup: string;
+  isPrivate: any;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  onGroupClick,
+  selectedGroup,
+  isPrivate,
+}) => {
   const [currentPage, setPage] = useState("all-chats");
 
   return (
@@ -22,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
               <Friends
                 onGroupClick={onGroupClick}
                 selectedFriend={selectedGroup}
+                isPrivate={isPrivate}
               />
             );
           case "groups":
@@ -29,6 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
               <Groups
                 onGroupClick={onGroupClick}
                 selectedGroup={selectedGroup}
+                isPrivate={isPrivate}
               />
             );
           case "all-chats":
@@ -36,6 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
               <Chats
                 onGroupClick={onGroupClick}
                 selectedGroup={selectedGroup}
+                isPrivate={isPrivate}
               />
             );
           default:

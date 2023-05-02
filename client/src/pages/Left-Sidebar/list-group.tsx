@@ -13,6 +13,7 @@ interface Group {
 interface ChatGroupsProps {
   onGroupClick: (groupName: string, isprivate: any) => void;
   selectedGroup: string;
+  isPrivate: any;
 }
 
 export type RoomDetails = {
@@ -22,7 +23,11 @@ export type RoomDetails = {
   private: boolean;
 };
 
-const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
+const Groups: React.FC<ChatGroupsProps> = ({
+  onGroupClick,
+  selectedGroup,
+  isPrivate,
+}) => {
   const [groupList, setGroupList] = useState<Group[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
@@ -55,6 +60,11 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
       socket.off("rooms", groupListener);
     };
   }, []);
+  const validateGroupName = (groupName: string): string => {
+    groupName = "G: " + groupName;
+
+    return groupName;
+  };
 
   const handleCreateGroup = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,7 +78,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
     if (groupName) {
       socket.emit("join-room", {
         username: username,
-        room: groupName.value,
+        room: validateGroupName(groupName.value),
       });
     }
     socket.emit("get-all-rooms");
@@ -123,6 +133,7 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
             key={index}
             group={group}
             selectedGroup={selectedGroup}
+            isPrivate={isPrivate}
           />
         ))}
       </div>
