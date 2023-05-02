@@ -220,23 +220,35 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       console.log(data);
       data.time = new Date(data.time);
       if (data.message.trim() != "") {
-        setMessages((prevMessages) => {
-          const currentRoomMessages = prevMessages[data.room] || [];
-          return {
-            ...prevMessages,
-            [data.room]: [...currentRoomMessages, data],
-          };
-        });
+        const roomName = isPrivate
+          ? formatRoomName(username as string, selectedGroup)
+          : selectedGroup;
+
+        // Check if the received message's room is a private room between the current user and the message sender
+        const isPrivateChat =
+          data.room === formatRoomName(username as string, data.author);
+
+        // Only update messages if the received message's room matches the current room or is a private chat
+        if (data.room === roomName || (isPrivateChat && isPrivate)) {
+          setMessages((prevMessages) => {
+            const roomKey = isPrivate ? room : selectedGroup;
+            const currentRoomMessages = prevMessages[roomKey] || [];
+            return {
+              ...prevMessages,
+              [roomKey]: [...currentRoomMessages, data],
+            };
+          });
+        }
       }
     };
 
     socket.on("message", handleNewMessage);
 
+    // Add a cleanup function to remove the event listener when the component updates
     return () => {
-      // Remove the event listener to prevent duplicates
       socket.off("message", handleNewMessage);
     };
-  }, []);
+  }, [selectedGroup, room, isPrivate, messages, username]); // Keep 'messages' as a dependency
 
   useEffect(() => {
     if (selectedGroup) {
@@ -286,8 +298,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         setAnnouncements(allAnnouncements);
         setHideAnnouncements(false);
         setMessages((prevMessages) => {
-          // Set past messages after join room first time
-          if (!prevMessages[room]) {
+          // Set past messages if either the room is not in the prevMessages or it's an update for the current room
+          if (
+            !prevMessages[room] ||
+            (prevMessages[room] && data.room === room)
+          ) {
             return {
               ...prevMessages,
               [room]: data.messages,
@@ -302,7 +317,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     return () => {
       socket.off("past-messages", handlePastMessages);
     };
-  }, [isPrivate, room, selectedGroup, username]);
+  }, [isPrivate, room, selectedGroup, username, messages]); // Add 'messages' as a dependency
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent the form from refreshing the page
@@ -315,10 +330,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         message: message,
         time: new Date(),
         room: roomName,
+        isPrivate: isPrivate, // add the isPrivate field
       });
     } // Prevent sending empty message
     setmessage(""); // Clear the input text box
   };
+
   return (
     <div className="h-full w-2/3 flex flex-col" onClick={hideContextMenu}>
       <div className="h-20 w-full bg-bgColor border-b border-borderColor flex-shrink-0">
