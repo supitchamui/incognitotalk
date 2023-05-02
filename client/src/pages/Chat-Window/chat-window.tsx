@@ -8,9 +8,9 @@ import React, {
 import { socket } from "../login";
 import Image from "next/image";
 import {
-  PaperAirplaneIcon,
-  MegaphoneIcon,
   ChevronDownIcon,
+  MegaphoneIcon,
+  PaperAirplaneIcon,
 } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { formatTime } from "@/utils/date";
@@ -355,8 +355,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         {!hideAnnouncements && (
           <>
             {announcements[0] != null && (
-              <div className="bg-fontBgColor text-fontWhiteDarkBgColor w-[100%] sticky top-0 z-10">
-                <div className="py-2 px-4 flex items-center justify-between border-b border-fontWhiteDarkBgColor">
+              <div className="bg-darkBgColor text-fontWhiteDarkBgColor w-[100%] sticky top-0 z-10">
+                <div className="py-2 px-4 flex items-center justify-between border-b border-borderColor">
                   <div className="flex items-center">
                     <MegaphoneIcon className="h-6 w-6 text-white-500" />
                     <p className="ml-2">{announcements[0]}</p>
@@ -373,7 +373,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                     {announcements.slice(1).map((announce, index) => (
                       <div
                         key={index}
-                        className="flex items-center bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 border-b border-fontWhiteDarkBgColor"
+                        className="flex items-center bg-fontBgColor bg-opacity-20 text-fontWhiteDarkBgColor py-2 px-4 border-b border-fontWhiteDarkBgColor"
                       >
                         <MegaphoneIcon className="h-6 w-6 text-white-500" />
                         <p className="text-sm ml-2">{announce}</p>
@@ -381,7 +381,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                     ))}
                     {showHideButton && (
                       <button
-                        className="bg-fontBgColor text-fontWhiteDarkBgColor py-2 px-4 w-full text-left focus:outline-none"
+                        className="bg-darkBgColor bg-opacity-80 text-fontWhiteDarkBgColor py-2 px-4 w-full text-left focus:outline-none"
                         onClick={() => {
                           socket.emit("remove-announce", {
                             room: selectedGroup,
@@ -389,7 +389,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                           handleHideAnnouncements();
                         }}
                       >
-                        <p className="text-sm">Do not show again!</p>
+                        <p className="text-sm hover:text-purple transition duration-250">
+                          Do not show again!
+                        </p>
                       </button>
                     )}
                   </div>
@@ -464,13 +466,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             })}
             {contextMenu.visible && (
               <div
-                className="fixed text-fontWhiteDarkBgColor p-2 bg-fontBgColor"
+                className="fixed text-fontWhiteDarkBgColor p-2 bg-darkBgColor bg-opacity-70 rounded-2xl"
                 style={{ top: contextMenu.y, left: contextMenu.x }}
               >
                 {contextMenu.isCurrentUser && (
                   <button
                     onClick={handleUnsendMessage}
-                    className="cursor-pointer text-sm p-1 block w-full text-left"
+                    className="cursor-pointer text-sm p-1 block w-full text-left hover:text-purple transition duration-250"
                   >
                     unsend
                   </button>
@@ -486,7 +488,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                   }}
                   className={`cursor-pointer text-sm p-1 block w-full text-left ${
                     contextMenu.isCurrentUser ? "mt-1" : ""
-                  }`}
+                  } hover:text-purple transition duration-250`}
                 >
                   announce
                 </button>

@@ -74,8 +74,10 @@ const Friends: React.FC<ChatFriendsProps> = ({
           return (
             <div
               className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
-                friend == selectedFriend ? "bg-purple bg-opacity-40" : ""
-              }`}
+                friend == selectedFriend
+                  ? "bg-purple bg-opacity-40"
+                  : "hover:bg-purple hover:bg-opacity-5"
+              } transition duration-250`}
               key={index}
               onClick={() => {
                 onGroupClick(friend, true);

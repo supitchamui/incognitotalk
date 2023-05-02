@@ -65,7 +65,7 @@ const Home: React.FC = () => {
             ref={accountButtonRef}
             type="button"
             name="account"
-            className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3"
+            className="flex flex-row items-center hover:bg-bgColor p-2 rounded-2xl mr-3 transition duration-200"
             onClick={toggleDropdown}
           >
             <Image
@@ -82,7 +82,7 @@ const Home: React.FC = () => {
           {dropdownVisible && (
             <div
               ref={dropdownRef}
-              className="bg-fontBgColor text-white absolute mt-2 top-14 right-3 shadow-md py-2 px-7 rounded-md z-10"
+              className="bg-borderColor bg-opacity-80 text-white absolute mt-2 top-16 right-4 shadow-md py-2 px-4 rounded-md z-10 hover:bg-red-500 transition duration-200"
               onClick={toggleDropdown}
             >
               <button onClick={handleLogout} className="text-sm">
