@@ -301,7 +301,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           // Set past messages if either the room is not in the prevMessages or it's an update for the current room
           if (
             !prevMessages[room] ||
-            (prevMessages[room] && data.room === room)
+            (prevMessages[room] && data.room === roomName)
           ) {
             return {
               ...prevMessages,
