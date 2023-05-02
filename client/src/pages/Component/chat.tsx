@@ -57,7 +57,6 @@ const ChatItem: React.FC<GroupItemProps> = ({
         ></Image>
         <div className="font-roboto ml-6">
           <p className={`text-white text-xl mt-2 font-bold}`}>{chat.name}</p>
-          <p className={`text-fontBgColor text-base mt-2}`}>{chat.message}</p>
         </div>
       </div>
       <div className="ml-auto mr-6">

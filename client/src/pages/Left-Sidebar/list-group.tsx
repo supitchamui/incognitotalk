@@ -55,6 +55,11 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
       socket.off("rooms", groupListener);
     };
   }, []);
+  const validateGroupName = (groupName: string): string => {
+    groupName = "G: " + groupName;
+
+    return groupName;
+  };
 
   const handleCreateGroup = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,7 +71,10 @@ const Groups: React.FC<ChatGroupsProps> = ({ onGroupClick, selectedGroup }) => {
       return;
     }
     if (groupName) {
-      socket.emit("join-room", { username: username, room: groupName.value });
+      socket.emit("join-room", {
+        username: username,
+        room: validateGroupName(groupName.value),
+      });
     }
     socket.emit("get-all-rooms");
     groupName.value = "";
