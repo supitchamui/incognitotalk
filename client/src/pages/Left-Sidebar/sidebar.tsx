@@ -18,7 +18,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
       {(() => {
         switch (currentPage) {
           case "friends":
-            return <Friends onGroupClick={onGroupClick} />;
+            return (
+              <Friends
+                onGroupClick={onGroupClick}
+                selectedFriend={selectedGroup}
+              />
+            );
           case "groups":
             return (
               <Groups
@@ -27,7 +32,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onGroupClick, selectedGroup }) => {
               />
             );
           case "all-chats":
-            return <Chats onGroupClick={onGroupClick} />;
+            return (
+              <Chats
+                onGroupClick={onGroupClick}
+                selectedGroup={selectedGroup}
+              />
+            );
           default:
             return null;
         }

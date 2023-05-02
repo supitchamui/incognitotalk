@@ -7,9 +7,13 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 interface ChatFriendsProps {
   onGroupClick: (GroupName: string, isprivate: any) => void;
+  selectedFriend: string;
 }
 
-const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
+const Friends: React.FC<ChatFriendsProps> = ({
+  onGroupClick,
+  selectedFriend,
+}) => {
   const [friendList, setFriendList] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
@@ -69,7 +73,9 @@ const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
         {filteredFriends.map((friend, index) => {
           return (
             <div
-              className="h-28 w-full border-b border-borderColor items-center flex cursor-pointer"
+              className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
+                friend == selectedFriend ? "bg-purple bg-opacity-40" : ""
+              }`}
               key={index}
               onClick={() => {
                 onGroupClick(friend, true);
@@ -85,7 +91,13 @@ const Friends: React.FC<ChatFriendsProps> = ({ onGroupClick }) => {
                 className="ml-6"
               ></Image>
               <div className="font-roboto ml-6">
-                <p className="text-white text-xl">{friend}</p>
+                <p
+                  className={`text-white text-xl ${
+                    friend === selectedFriend ? "font-bold" : ""
+                  }`}
+                >
+                  {friend}
+                </p>
               </div>
             </div>
           );
