@@ -70,14 +70,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   useEffect(() => {
     socket.on("announce-removed", (room) => {
-      if (room == selectedGroup) {
+      const roomName = isPrivate
+        ? formatRoomName(selectedGroup, username as string)
+        : room;
+      if (room == roomName) {
         handleHideAnnouncements();
       }
     });
     return () => {
       socket.off("announce-removed");
     };
-  }, [handleHideAnnouncements, selectedGroup]);
+  }, [handleHideAnnouncements, isPrivate, selectedGroup, username]);
 
   const handleContextMenu = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
@@ -383,8 +386,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                       <button
                         className="bg-darkBgColor bg-opacity-80 text-fontWhiteDarkBgColor py-2 px-4 w-full text-left focus:outline-none"
                         onClick={() => {
+                          const roomName = isPrivate
+                            ? formatRoomName(selectedGroup, username as string)
+                            : room;
                           socket.emit("remove-announce", {
-                            room: selectedGroup,
+                            room: roomName,
                           });
                           handleHideAnnouncements();
                         }}
