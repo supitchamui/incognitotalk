@@ -71,7 +71,6 @@ const ChatItem: React.FC<GroupItemProps> = ({
           >
             {chat.name}
           </p>
-          <p className={`text-fontBgColor text-base mt-2`}>{chat.message}</p>
         </div>
       </div>
       <div
