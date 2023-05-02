@@ -6,20 +6,22 @@ interface Group {
   people: number;
 }
 interface GroupItemProps {
-  onGroupClick: (groupName: string, isPrivate: boolean) => void;
+  onGroupClick: (groupName: string, isPrivate: any) => void;
   group: Group;
   selectedGroup: string;
+  isPrivate: any;
 }
 
 const GroupItem: React.FC<GroupItemProps> = ({
   onGroupClick,
   group,
   selectedGroup,
+  isPrivate,
 }) => {
   return (
     <div
       className={`h-28 w-full cursor-pointer  border-b border-borderColor items-center flex ${
-        group.groupName === selectedGroup
+        group.groupName === selectedGroup && !isPrivate
           ? "bg-purple bg-opacity-40"
           : "hover:bg-purple hover:bg-opacity-5"
       } transition duration-200`}
@@ -40,7 +42,7 @@ const GroupItem: React.FC<GroupItemProps> = ({
       <div className="font-roboto ml-6">
         <p
           className={`text-white text-xl ${
-            group.groupName === selectedGroup ? "font-bold" : ""
+            group.groupName === selectedGroup && !isPrivate ? "font-bold" : ""
           }`}
         >
           {`${group.groupName} (${group.people})`}

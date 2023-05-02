@@ -10,7 +10,8 @@ import { useRouter } from "next/router";
 interface GroupItemProps {
   chat: Chat;
   setLikedList: React.Dispatch<React.SetStateAction<String[]>>;
-  onGroupClick: (groupName: string, isPrivate: boolean) => void;
+  onGroupClick: (groupName: string, isPrivate: any) => void;
+  isPrivate: any;
   selectedGroup: string;
 }
 
@@ -18,6 +19,7 @@ const ChatItem: React.FC<GroupItemProps> = ({
   chat,
   setLikedList,
   onGroupClick,
+  isPrivate,
   selectedGroup,
 }) => {
   const [isHeartActive, setIsHeartActive] = useState(chat.pin);
@@ -42,7 +44,8 @@ const ChatItem: React.FC<GroupItemProps> = ({
   return (
     <div
       className={`h-28 w-full items-center flex cursor-pointer border-b border-borderColor ${
-        selectedGroup == (chat.isPrivate ? chat.name : chat.roomName)
+        selectedGroup == (chat.isPrivate ? chat.name : chat.roomName) &&
+        isPrivate == chat.isPrivate
           ? "bg-purple bg-opacity-40"
           : "hover:bg-purple hover:bg-opacity-5"
       } transition duration-250`}
