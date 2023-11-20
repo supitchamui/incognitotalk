@@ -1,3 +1,5 @@
+//setค่าเพื่อส่งคืนที่ sidebar
+
 type SidebarMenuProps = {
   setPage: (page: string) => void;
   currentPage: string;
@@ -27,7 +29,7 @@ const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
             console.log("friends");
           }}
         >
-          <UserIcon className="h-8 w-8" />
+          <UserIcon className="h-8 w-8" /> 
           <span className="text-sm font-medium">Friends</span>
         </button>
       </div>

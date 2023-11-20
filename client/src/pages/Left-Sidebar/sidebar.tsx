@@ -1,3 +1,5 @@
+//ตัวควบคุมการส่งข้อมูลฝั่งsidebar ไม่มีhtml 
+
 import React, { useState } from "react";
 import Chats from "./list-chat";
 import Friends from "./list-friend";

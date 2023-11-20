@@ -7,6 +7,40 @@ const users = [];
 const rooms = [];
 const messages = [];
 
+const checkUsername = (username) => {
+  //เช็คusernameว่าชื่อซ้ำหรือไม่ ถ้ามีreturn true
+  return users.some((user) => user.username === username);
+}
+
+const deleteUser = (username) => {
+  // ลบผู้ใช้จาก users
+  const userIndex = users.findIndex((user) => user.username === username);
+  if (userIndex !== -1) {
+    // ลบผู้ใช้จาก users
+    users.splice(userIndex, 1);
+
+    // ลบห้องที่เกี่ยวข้องกับผู้ใช้
+    rooms.forEach((room, index) => {
+      const userRoomIndex = room.users.findIndex((user) => user.username === username);
+      if (userRoomIndex !== -1) {
+        room.users.splice(userRoomIndex, 1);
+        rooms[index].userCount--; // ลดจำนวนผู้ใช้ในห้องลง
+        if (rooms[index].userCount === 0) {
+          // ถ้าไม่มีผู้ใช้ในห้องแล้ว ลบห้องออก
+          rooms.splice(index, 1);
+        }
+      }
+    });
+
+    // ลบข้อความที่เกี่ยวข้องกับผู้ใช้
+    messages.filter((message) => message.author === username).forEach((message, index) => {
+      messages.splice(messages.indexOf(message), 1);
+    });
+  }
+};
+
+
+
 const addUser = (userId, username) => {
   // register user if not exist
   const index = users.findIndex((user) => user.username === username);
@@ -186,6 +220,8 @@ const getMessageInRoom = (room) => {
 };
 
 module.exports = {
+  deleteUser,
+  checkUsername,
   addUser,
   joinRoom,
   leaveRoom,

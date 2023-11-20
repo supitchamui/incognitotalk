@@ -9,8 +9,19 @@ export const socket = io(URL, { transports: ["websocket"] });
 
 const validateUsername = (username: string) => {
   // Check if the input contains only alphanumeric characters and does not exceed 10 characters
-  return /^[A-Za-z0-9]{1,10}$/.test(username);
+  return /^[A-Za-z0-9ก-๙]{1,13}$/.test(username);
 };
+
+const validateSameUsername = (username: string, callback: { (isTaken: any): void; (arg0: any): void; }) => {
+  socket.emit("check-username", { username: username });
+  // รอรับค่าจากเซิร์ฟเวอร์ผ่าน Socket.io
+  socket.on("username-available", (isUsernameTaken) => {
+    // นำค่า isUsernameTaken ไปทำสิ่งต่างๆ ตามที่ต้องการ
+    callback(isUsernameTaken);
+  });
+};
+
+
 
 const Login = () => {
   const router = useRouter();
@@ -19,20 +30,45 @@ const Login = () => {
 
   const handleLogin = (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
+
     if (validateUsername(username)) {
-      if (username) {
-        socket.emit("register", {
+      validateSameUsername(username, (isTaken: any) => {
+        if (!isTaken) {
+          socket.emit("register", {
           username: username,
-        });
-        router.push({ pathname: "/home", query: { username: username } });
-        socket.emit("get-all-users");
-      }
+          });
+          router.push({ pathname: "/home", query: { username: username } });
+          socket.emit("get-all-users");
+        } else {
+          setWarning(
+            "username ซ้ำ กรุณาตั้งชื่อใหม่"
+            );
+        }
+      });
     } else {
-      // Show warning if the username does not meet the criteria
       setWarning(
-        "Name must contain only alphabet and number, and not exceed 10 characters."
+        "Name must contain only alphabet Thai and number, and not exceed 13 characters."
       );
     }
+    
+    // if (validateUsername(username) && validateSameUsername(username)) {
+    //   if (username) {
+    //     socket.emit("register", {
+    //       username: username,
+    //     });
+    //     router.push({ pathname: "/home", query: { username: username } });
+    //     socket.emit("get-all-users");
+    //   }
+    // } else if(validateSameUsername(username)){
+    //   setWarning(
+    //     "username ซ้ำ กรุณาตั้งชื่อใหม่"
+    //   );
+    // }else {
+    //   // Show warning if the username does not meet the criteria
+    //   setWarning(
+    //     "Name must contain only alphabet Thai and number, and not exceed 13 characters."
+    //   );
+    // }
   };
 
   return (

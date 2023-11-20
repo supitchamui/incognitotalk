@@ -4,6 +4,8 @@ const cors = require("cors");
 const http = require("http");
 const Server = require("socket.io");
 const {
+  deleteUser,
+  checkUsername,
   joinRoom,
   getAllUsers,
   leaveRoom,
@@ -92,6 +94,16 @@ io.on("connection", (socket) => {
     leaveRoom(username, room);
     socket.leave(room);
   });
+
+  socket.on("check-username", ({ username }) => {
+    const isUsernameTaken  = checkUsername(username);
+    io.emit("username-available", isUsernameTaken );
+  });
+
+  socket.on("delete-user", ({ username }) => {
+    deleteUser(username);
+  });
+
 });
 
 server.listen(process.env.PORT, () => {
