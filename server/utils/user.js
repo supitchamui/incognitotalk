@@ -220,6 +220,7 @@ const getMessageInRoom = (room) => {
 };
 
 module.exports = {
+  users,
   deleteUser,
   checkUsername,
   addUser,

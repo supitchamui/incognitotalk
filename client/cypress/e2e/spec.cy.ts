@@ -84,6 +84,11 @@
 
 // })
 
+
+
+
+
+
 //TC1: หากชื่อ username มีชื่อซ้ำกับ username ที่มีอยู่ในระบบ ต้องไม่สามารถตั้งชื่อได้ และแจ้งเตือน ”username ซ้ำ กรุณาตั้งใหม่”
 describe('That usernsme is taken Test', () => {
   beforeEach(() => {
@@ -99,7 +104,7 @@ describe('That usernsme is taken Test', () => {
     cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
   });
 
-  it('เมื่อตั้้ง usernameซ้ำ จะไม่สามารถไปหน้าต่อไปได้', () => {
+  it('เมื่อตั้้ง usernameซ้ำ จะไม่สามารถไปหน้าต่อไปได้และแจ้้งเตือน', () => {
     //test ว่าเมื่อไปยังหน้าlogin แล้วloginด้วยusername=ออม ต้องขึ้นแจ้งเตือนและไม่ไปหน้าต่อไป
     const validUsername = 'dddd';
     cy.get('input[name="username"]').type(validUsername);
@@ -115,41 +120,75 @@ describe('That usernsme is taken Test', () => {
 
 
 
+//US1: TC2: เมื่อผู้ใช้กด logout แล้ว username นั้นจะไม่ถูกพบใน username ที่ยังอยู่บนระบบ
+describe('Logout Test', () => {
+  // beforeEach(() => {
+  //   cy.visit('http://localhost:3000');
+  // });
+
+  it('username = aom ทำการlogin เข้าใช้งานสำเร็จ', () => {
+    //login ด้วยusername ชื่อ aom เพื่อแน่ใจว่า aom กำลังใช้งานอยู่ในระบบ
+    cy.visit('http://localhost:3000');
+
+    const validUsername = 'ฟฟฟ';
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
+    cy.url().should('include', '/home');
+    cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+    
+
+    cy.get('button[name="account"]').click();
+    cy.get('.bg-borderColor').should('be.visible');
+    cy.contains('button', 'Logout').click();  
+    cy.url().should('include', '/login');
 
 
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
+    cy.url().should('include', '/home');
+    cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+  });
 
 
+  // it('username = aom กดปุ่มlogout ถูกส่งไปหน้าlogin', () => {
+  //   //const validUsername = 'ท';
+  //   cy.get('button[name="account"]').click();
+  //   cy.get('.bg-borderColor').should('be.visible');
+  //   cy.contains('button', 'Logout').click();  
+  //   cy.url().should('include', '/login');
+  // });
 
 
+  // it('username = aom ทำการlogin อีกครั้ง เข้าใช้งานสำเร็จ', () => {
+  //   //login ด้วยusername ชื่อ aom เพื่อแน่ใจว่า aom กำลังใช้งานอยู่ในระบบ
+  //   const validUsername = 'บบบ';
+  //   cy.get('input[name="username"]').type(validUsername);
+  //   cy.get('button[name="Go"]').click();
+  //   cy.url().should('include', '/home');
+  //   cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+  // });
 
 
+  // it('Username should not be found after logout', () => {
+  //   const validUsername = 'สสส'; // ชื่อ username ที่จะทำการ logout
+  //   cy.get('button[name="account"]').click();
+  //   cy.get('.bg-borderColor').should('be.visible');
+  //   cy.contains('button', 'Logout').click();
+  //   // ตรวจสอบว่าหลังจาก logout แล้ว username ไม่พบในระบบอีกต่อไป
+  //   cy.window().its('users').should('not.include', { username: validUsername });
+  // });
 
+  // it('ใใใ', () => {
+  //   cy.get('button[name="account"]').click();
+  //   //cy.get('.text-sm').click({ multiple: true });
+  //   cy.get('.bg-borderColor').should('be.visible');
 
+  //   // คลิกที่ปุ่ม Logout
+  //   cy.contains('button', 'Logout').click();
 
-
-
-
-
-
-
-
-
-// describe('Logout Test', () => {
-//   beforeEach(() => {
-//     cy.visit('http://localhost:3000/home?username=aom');
-//   });
-
-//   it('ใใใ', () => {
-//     cy.get('button[name="account"]').click();
-//     //cy.get('.text-sm').click({ multiple: true });
-//     cy.get('.bg-borderColor').should('be.visible');
-
-//     // คลิกที่ปุ่ม Logout
-//     cy.contains('button', 'Logout').click();
-
-//     cy.window().then((win) => {
-//       const users = win.users; 
+  //   cy.window().then((win) => {
+  //     const users = win.users; 
   
-//     });
-//   });
-// });
+  //   });
+  // });
+});
