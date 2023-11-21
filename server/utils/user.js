@@ -19,7 +19,7 @@ const deleteUser = (username) => {
     // ลบผู้ใช้จาก users
     users.splice(userIndex, 1);
 
-    // ลบห้องที่เกี่ยวข้องกับผู้ใช้
+    //ลบห้องที่เกี่ยวข้องกับผู้ใช้
     rooms.forEach((room, index) => {
       const userRoomIndex = room.users.findIndex((user) => user.username === username);
       if (userRoomIndex !== -1) {
@@ -38,7 +38,6 @@ const deleteUser = (username) => {
     });
   }
 };
-
 
 
 const addUser = (userId, username) => {

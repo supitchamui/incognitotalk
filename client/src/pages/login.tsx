@@ -51,24 +51,6 @@ const Login = () => {
       );
     }
     
-    // if (validateUsername(username) && validateSameUsername(username)) {
-    //   if (username) {
-    //     socket.emit("register", {
-    //       username: username,
-    //     });
-    //     router.push({ pathname: "/home", query: { username: username } });
-    //     socket.emit("get-all-users");
-    //   }
-    // } else if(validateSameUsername(username)){
-    //   setWarning(
-    //     "username ซ้ำ กรุณาตั้งชื่อใหม่"
-    //   );
-    // }else {
-    //   // Show warning if the username does not meet the criteria
-    //   setWarning(
-    //     "Name must contain only alphabet Thai and number, and not exceed 13 characters."
-    //   );
-    // }
   };
 
   return (

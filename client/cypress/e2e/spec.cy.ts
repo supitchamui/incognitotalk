@@ -1,112 +1,81 @@
-// describe('create username', () => {
-//   beforeEach(() => {
-//     cy.visit('http://localhost:3000');
-//   });
+describe('US3: ผู้ใช้สามารถตั้งชื่อ username เป็นภาษาไทยตามเงื่อนไขที่กำหนดไว้', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:3000');
+  });
 
-// // TC1: สามารถตั้ง username เป็นภาษาอังกฤษเท่านั้น(passed)
-//   it('ตั้ง username เป็นภาษาอังกฤษเท่านั้น', () => {
-//     // Enter a valid English username
-//     const validUsername = 'aom';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
+  it('TC1: หาก username มีช่องว่างหรืออักขระพิเศษ จะไม่สามารถกดเข้าสู่หน้าต่อไป', () => {
+    const validUsername = 'aom   123';
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
 
-//     cy.url().should('include', '/home');
-//     cy.url().should('include', `username=${validUsername}`);
-//   })
+    cy.url().should('not.include', '/home');
+    cy.url().should('not.include', `username=${encodeURIComponent(validUsername)}`);
 
-// // TC2: สามารถตั้ง username เป็นตัวเลขเท่านั้น(passed)
-//   it('ตั้ง username เป็นตัวเลขเท่านั้น', () => {
-//     const validUsername = '123';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
+  })
 
-//     cy.url().should('include', '/home');
-//     cy.url().should('include', `username=${validUsername}`);
-//   })
+  it('TC2: สามารถตั้ง username เป็นภาษาไทย', () => {
+    const validUsername = 'ออม';
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
 
-// // TC5: สามารถตั้ง username เป็นภาษาอังกฤษและตัวเลขได้(passed)
-//   it('ตั้ง username เป็นภาษาไทยและตัวเลขได้', () => {
-//     const validUsername = 'aom123';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
-
-//     cy.url().should('include', '/home');
-//     cy.url().should('include', `username=${validUsername}`);
-//   })
-
-// // TC6: หาก username มีช่องว่างและอักขระพิเศษ จะไม่สามารถกดเข้าสู่หน้าต่อไป(passed)
-//   it('username มีช่องว่างและอักขระพิเศษ จะไม่สามารถกดเข้าสู่หน้าต่อไป', () => {
-//     const validUsername = 'aom   123';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
-
-//     cy.url().should('not.include', '/home');
-//     cy.url().should('not.include', `username=${validUsername}`);
-//   })
-
-// // TC8: หากเมื่อ user ไม่สามารถเข้าสู่หน้าต่อไปได้ จะแจ้งเตือน(passed)
-//   it('user ไม่สามารถเข้าสู่หน้าต่อไปได้ จะแจ้งเตือน', () => {
-//     const validUsername = '1234567890123';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
-//     cy.get('.text-red-500').should('be.visible');
-//   })
-
-// // TC3: สามารถตั้ง username เป็นภาษาไทยเท่านั้น(Fail)
-//   it('ตั้ง username เป็นภาษาไทยเท่านั้น', () => {
-//     const validUsername = 'ออม';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
-
-//     cy.url().should('include', '/home');
-//     cy.url().should('include', `username=${validUsername}`);
-//   })
+    cy.url().should('include', '/home');
+    cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+    cy.get('button[name="account"]').click();
+    cy.get('.bg-borderColor').should('be.visible');
+    cy.contains('button', 'Logout').click();  
+  })
   
-// // TC4: สามารถตั้ง username เป็นภาษาไทยและตัวเลขได้(Fail)
-//   it('ตั้ง username เป็นภาษาไทยและตัวเลขได้', () => {
-//     const validUsername = 'ออม123';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
+  it('TC3: สามารถตั้ง username เป็นภาษาไทยและตัวเลข', () => {
+    const validUsername = 'ออม123';
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
 
-//     cy.url().should('include', '/home');
-//     cy.url().should('include', `username=${validUsername}`);
-//   })
+    cy.url().should('include', '/home');
+    cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+    cy.get('button[name="account"]').click();
+    cy.get('.bg-borderColor').should('be.visible');
+    cy.contains('button', 'Logout').click();  
+  })
 
-// // TC7: หาก username ไม่เกิน 13 ตัวอักษร จะสามารถเข้าสู่หน้าต่อไป(Fail)
-//   it('username ไม่เกิน 13 ตัวอักษร จะสามารถเข้าสู่หน้าต่อไป', () => {
-//     const validUsername = '1234567890123';
-//     cy.get('input[name="username"]').type(validUsername);
-//     cy.get('button[name="Go"]').click();
+  it('TC4: หาก username ไม่เกิน 13 ตัวอักษร จะสามารถเข้าสู่หน้าต่อไป', () => {
+    const validUsername = '1234567890123';
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
 
-//     cy.url().should('include', '/home');
-//     cy.url().should('include', `username=${validUsername}`);
-//   })
+    cy.url().should('include', '/home');
+    cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+    cy.get('button[name="account"]').click();
+    cy.get('.bg-borderColor').should('be.visible');
+    cy.contains('button', 'Logout').click();  
+  })
+  
+  it('TC5: หาก user ไม่สามารถเข้าสู่หน้าต่อไปได้ จะแจ้งเตือนเงื่อนไขการตั้้งชื่อที่ถูกต้อง', () => {
+    const validUsername = '@@@';
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('button[name="Go"]').click();
+    cy.contains('Name must contain only alphabet Thai and number, and not exceed 13 characters.', { timeout: 10000 }).should('be.visible');
+  })
+})
 
-// })
 
 
-
-
-
-
-//TC1: หากชื่อ username มีชื่อซ้ำกับ username ที่มีอยู่ในระบบ ต้องไม่สามารถตั้งชื่อได้ และแจ้งเตือน ”username ซ้ำ กรุณาตั้งใหม่”
-describe('That usernsme is taken Test', () => {
+describe('US2: แจ้งเตือนให้ผู้ใช้เปลี่ยนชื่อเมื่อ username ซ้ำ', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000');
   });
   
-  it('username = aom ทำการlogin เข้าใช้งานสำเร็จ', () => {
+  it('username = ออมเลท ทำการlogin เข้าใช้งานสำเร็จ', () => {
     //login ด้วยusername ชื่อ aom เพื่อแน่ใจว่า aom กำลังใช้งานอยู่ในระบบ
-    const validUsername = 'ท';
+    const validUsername = 'ออมเลท';
     cy.get('input[name="username"]').type(validUsername);
     cy.get('button[name="Go"]').click();
     cy.url().should('include', '/home');
     cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
   });
 
-  it('เมื่อตั้้ง usernameซ้ำ จะไม่สามารถไปหน้าต่อไปได้และแจ้้งเตือน', () => {
+  it('TC1: หากชื่อ username มีชื่อซ้ำกับusernameที่ใช้งานอยู่ในระบบ ต้องไม่สามารถเข้าสู่หน้าต่อไปได้ และแจ้งเตือน ”usernameซ้ำ กรุณาตั้งใหม่”', () => {
     //test ว่าเมื่อไปยังหน้าlogin แล้วloginด้วยusername=ออม ต้องขึ้นแจ้งเตือนและไม่ไปหน้าต่อไป
-    const validUsername = 'dddd';
+    const validUsername = 'ออมเลท';
     cy.get('input[name="username"]').type(validUsername);
     cy.get('button[name="Go"]').click();
     cy.url().should('not.include', '/home');
@@ -118,19 +87,12 @@ describe('That usernsme is taken Test', () => {
 });
 
 
+describe('US1: เมื่อ logout จากระบบ จะลบข้อมูลของ user รวมถึงข้อมูลที่เกี่ยวข้องของ user', () => {
 
-
-//US1: TC2: เมื่อผู้ใช้กด logout แล้ว username นั้นจะไม่ถูกพบใน username ที่ยังอยู่บนระบบ
-describe('Logout Test', () => {
-  // beforeEach(() => {
-  //   cy.visit('http://localhost:3000');
-  // });
-
-  it('username = aom ทำการlogin เข้าใช้งานสำเร็จ', () => {
-    //login ด้วยusername ชื่อ aom เพื่อแน่ใจว่า aom กำลังใช้งานอยู่ในระบบ
+  it('TC1: เมื่อผู้ใช้ทำการ login แล้วกดlogout เมื่อloginด้วยชื่อเดิมจะสามารถเข้าสู่ระบบได้', () => {
     cy.visit('http://localhost:3000');
 
-    const validUsername = 'ฟฟฟ';
+    const validUsername = 'testLogout';
     cy.get('input[name="username"]').type(validUsername);
     cy.get('button[name="Go"]').click();
     cy.url().should('include', '/home');
@@ -139,7 +101,7 @@ describe('Logout Test', () => {
 
     cy.get('button[name="account"]').click();
     cy.get('.bg-borderColor').should('be.visible');
-    cy.contains('button', 'Logout').click();  
+    cy.contains('button', 'Logout').click();
     cy.url().should('include', '/login');
 
 
@@ -147,48 +109,8 @@ describe('Logout Test', () => {
     cy.get('button[name="Go"]').click();
     cy.url().should('include', '/home');
     cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
+    cy.get('button[name="account"]').click();
+    cy.get('.bg-borderColor').should('be.visible');
+    cy.contains('button', 'Logout').click();  
   });
-
-
-  // it('username = aom กดปุ่มlogout ถูกส่งไปหน้าlogin', () => {
-  //   //const validUsername = 'ท';
-  //   cy.get('button[name="account"]').click();
-  //   cy.get('.bg-borderColor').should('be.visible');
-  //   cy.contains('button', 'Logout').click();  
-  //   cy.url().should('include', '/login');
-  // });
-
-
-  // it('username = aom ทำการlogin อีกครั้ง เข้าใช้งานสำเร็จ', () => {
-  //   //login ด้วยusername ชื่อ aom เพื่อแน่ใจว่า aom กำลังใช้งานอยู่ในระบบ
-  //   const validUsername = 'บบบ';
-  //   cy.get('input[name="username"]').type(validUsername);
-  //   cy.get('button[name="Go"]').click();
-  //   cy.url().should('include', '/home');
-  //   cy.url().should('include', `username=${encodeURIComponent(validUsername)}`);
-  // });
-
-
-  // it('Username should not be found after logout', () => {
-  //   const validUsername = 'สสส'; // ชื่อ username ที่จะทำการ logout
-  //   cy.get('button[name="account"]').click();
-  //   cy.get('.bg-borderColor').should('be.visible');
-  //   cy.contains('button', 'Logout').click();
-  //   // ตรวจสอบว่าหลังจาก logout แล้ว username ไม่พบในระบบอีกต่อไป
-  //   cy.window().its('users').should('not.include', { username: validUsername });
-  // });
-
-  // it('ใใใ', () => {
-  //   cy.get('button[name="account"]').click();
-  //   //cy.get('.text-sm').click({ multiple: true });
-  //   cy.get('.bg-borderColor').should('be.visible');
-
-  //   // คลิกที่ปุ่ม Logout
-  //   cy.contains('button', 'Logout').click();
-
-  //   cy.window().then((win) => {
-  //     const users = win.users; 
-  
-  //   });
-  // });
 });
