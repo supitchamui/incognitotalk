@@ -5,29 +5,21 @@ import ChatWindow from "./Chat-Window/chat-window";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import hashString from "@/utils/hashString";
-import { io } from "socket.io-client";
-
-const URL = process.env.NEXT_PUBLIC_URL ?? "";
-export const socket = io(URL, { transports: ["websocket"] });
+import { socket } from "./login";
 
 const Home: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("");
   const [isPrivate, setIsPrivate] = useState<any>(undefined);
-
   const handleGroupClick = (groupName: string, isprivate: any) => {
     setSelectedGroup(groupName);
     setShowChatWindow(true);
     setIsPrivate(isprivate);
   };
-
-
   const accountButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -37,7 +29,7 @@ const Home: React.FC = () => {
       !accountButtonRef.current.contains(event.target as Node)
     ) {
       setDropdownVisible(false);
-    }//ตรวจสอบว่าelement ที่ถูกคลิกไม่ได้อยู่ภายใน dropdownRef
+    }
   };
 
   const toggleDropdown = (e: React.MouseEvent) => {
@@ -47,7 +39,7 @@ const Home: React.FC = () => {
 
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    socket.emit("delete-user", { username });
+    socket.emit("logout", username);
     router.push("/login");
   };
 

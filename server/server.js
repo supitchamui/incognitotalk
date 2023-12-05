@@ -4,7 +4,6 @@ const cors = require("cors");
 const http = require("http");
 const Server = require("socket.io");
 const {
-  deleteUser,
   checkUsername,
   joinRoom,
   getAllUsers,
@@ -18,6 +17,7 @@ const {
   announceMessage,
   removeAnnounce,
   pinChat,
+  logout,
 } = require("./utils/user");
 
 dotenv.config();
@@ -32,17 +32,18 @@ io.on("connection", (socket) => {
   socket.on("register", ({ username }) => {
     addUser(socket.id, username);
     socket.emit("userId", socket.id);
-    // console.log(socket.id);
   });
 
   socket.on("join-room", ({ username, room, private }) => {
-    // console.log(room);
     joinRoom(socket.id, username, room, private);
     socket.join(room);
   });
-
+  socket.on("logout", async (username) => {
+    await logout(username);
+    const users = getAllUsers();
+    io.emit("users", users);
+  });
   socket.on("send-message", (message) => {
-    // console.log(message.room);
     const m = sendMessage(message);
     if (m) {
       io.to(message.room).emit("message", m);
@@ -65,7 +66,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("get-past-messages", ({ room }) => {
-    // console.log(room);
     const past_messages = getMessageInRoom(room);
     io.to(room).emit("past-messages", { room: room, messages: past_messages });
   });
@@ -91,19 +91,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave-room", ({ username, room }) => {
-    leaveRoom(username, room);
+    leaveRoom(socket, username, room);
     socket.leave(room);
   });
-
-  socket.on("check-username", ({ username }) => {
-    const isUsernameTaken  = checkUsername(username);
-    io.emit("username-available", isUsernameTaken );
+  socket.on("check-username", (username) => {
+    const isUsernameTaken = checkUsername(username);
+    io.to(socket.id).emit("username-available", isUsernameTaken);
   });
-
-  socket.on("delete-user", ({ username }) => {
-    deleteUser(username);
-  });
-
 });
 
 server.listen(process.env.PORT, () => {

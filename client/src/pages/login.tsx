@@ -7,50 +7,38 @@ import { io } from "socket.io-client";
 const URL = process.env.NEXT_PUBLIC_URL ?? "";
 export const socket = io(URL, { transports: ["websocket"] });
 
-const validateUsername = (username: string) => {
-  // Check if the input contains only alphanumeric characters and does not exceed 10 characters
-  return /^[A-Za-z0-9ก-๙]{1,13}$/.test(username);
-};
-
-const validateSameUsername = (username: string, callback: { (isTaken: any): void; (arg0: any): void; }) => {
-  socket.emit("check-username", { username: username });
-  // รอรับค่าจากเซิร์ฟเวอร์ผ่าน Socket.io
-  socket.on("username-available", (isUsernameTaken) => {
-    // นำค่า isUsernameTaken ไปทำสิ่งต่างๆ ตามที่ต้องการ
-    callback(isUsernameTaken);
-  });
-};
-
-
-
 const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [warning, setWarning] = useState<string>("");
-
-  const handleLogin = (e: FormEvent<HTMLElement>) => {
+  const validateUsername = (username: string) => {
+    return /^[A-Za-z0-9ก-๙]{1,13}$/.test(username);
+  };
+  const handleLogin = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
-
     if (validateUsername(username)) {
-      validateSameUsername(username, (isTaken: any) => {
-        if (!isTaken) {
-          socket.emit("register", {
-          username: username,
-          });
-          router.push({ pathname: "/home", query: { username: username } });
-          socket.emit("get-all-users");
-        } else {
-          setWarning(
-            "username ซ้ำ กรุณาตั้งชื่อใหม่"
-            );
-        }
+      const isUsernameTaken = await new Promise<boolean>((resolve) => {
+        const usernameAvailabilityListener = (isAvailable: boolean) => {
+          resolve(isAvailable);
+        };
+
+        socket.once("username-available", usernameAvailabilityListener);
+        socket.emit("check-username", username);
       });
+      if (!isUsernameTaken) {
+        socket.emit("register", {
+          username: username,
+        });
+        router.push({ pathname: "/home", query: { username: username } });
+        socket.emit("get-all-users");
+      } else {
+        setWarning("username ซ้ำ กรุณาตั้งชื่อใหม่");
+      }
     } else {
       setWarning(
-        "Name must contain only alphabet Thai and number, and not exceed 13 characters."
+        "Name must contain only alphabet and number, and not exceed 10 characters."
       );
     }
-    
   };
 
   return (

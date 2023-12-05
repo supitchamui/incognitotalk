@@ -6,48 +6,23 @@ const ObjectId = require("mongodb").ObjectId;
 const users = [];
 const rooms = [];
 const messages = [];
-
 const checkUsername = (username) => {
-  //เช็คusernameว่าชื่อซ้ำหรือไม่ ถ้ามีreturn true
-  return users.some((user) => user.username === username);
-}
-
-const deleteUser = (username) => {
-  // ลบผู้ใช้จาก users
-  const userIndex = users.findIndex((user) => user.username === username);
-  if (userIndex !== -1) {
-    // ลบผู้ใช้จาก users
-    users.splice(userIndex, 1);
-
-    //ลบห้องที่เกี่ยวข้องกับผู้ใช้
-    rooms.forEach((room, index) => {
-      const userRoomIndex = room.users.findIndex((user) => user.username === username);
-      if (userRoomIndex !== -1) {
-        room.users.splice(userRoomIndex, 1);
-        rooms[index].userCount--; // ลดจำนวนผู้ใช้ในห้องลง
-        if (rooms[index].userCount === 0) {
-          // ถ้าไม่มีผู้ใช้ในห้องแล้ว ลบห้องออก
-          rooms.splice(index, 1);
-        }
-      }
-    });
-
-    // ลบข้อความที่เกี่ยวข้องกับผู้ใช้
-    messages.filter((message) => message.author === username).forEach((message, index) => {
-      messages.splice(messages.indexOf(message), 1);
-    });
+  const user = users.find((user) => user.username === username);
+  console.log(user);
+  if (user && user.status === 1) {
+    return true;
   }
+  return false;
 };
-
-
 const addUser = (userId, username) => {
   // register user if not exist
   const index = users.findIndex((user) => user.username === username);
   if (index === -1) {
-    const user = { id: userId, username: username, rooms: [] };
+    const user = { id: userId, username: username, rooms: [], status: 1 };
     users.push(user);
   } else {
     users[index].id = userId;
+    users[index].status = 1;
   }
   console.log(users);
 };
@@ -90,8 +65,7 @@ const joinRoom = (userId, username, room, private) => {
   console.log(rooms);
   console.log(users);
 };
-
-const leaveRoom = (username, room) => {
+const leaveRoom = async (username, room) => {
   // remove specific room from user room list
   const user = users.find((user) => user.username === username);
   if (user.rooms.length === 0) {
@@ -115,7 +89,8 @@ const getCurrentUser = (username) => {
 };
 
 const getAllUsers = () => {
-  const allUsers = users.map((user) => user.username);
+  const onlineUser = users.filter((user) => user.status === 1);
+  const allUsers = onlineUser.map((user) => user.username);
   return allUsers;
 };
 
@@ -217,12 +192,23 @@ const getMessageInRoom = (room) => {
   console.log(msg);
   return msg;
 };
+const logout = async (username) => {
+  try {
+    const userIndex = users.findIndex((user) => user.username === username);
+    if (userIndex !== -1) {
+      users[userIndex].status = 0;
+      console.log(`User ${username} has been logout`);
+    } else {
+      console.log(`User ${username} not found.`);
+    }
+  } catch (error) {
+    console.error(`Error while logout user ${username}: ${error.message}`);
+  }
+};
 
 module.exports = {
-  users,
-  deleteUser,
-  checkUsername,
   addUser,
+  logout,
   joinRoom,
   leaveRoom,
   getCurrentUser,
@@ -235,4 +221,5 @@ module.exports = {
   announceMessage,
   removeAnnounce,
   getMessageInRoom,
+  checkUsername,
 };
