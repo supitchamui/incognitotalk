@@ -11,6 +11,8 @@ const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [warning, setWarning] = useState<string>("");
+  const [tellText, setTellText] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const validateUsername = (username: string) => {
     return /^[A-Za-z0-9ก-๙]{1,13}$/.test(username);
   };
@@ -28,6 +30,8 @@ const Login = () => {
       if (!isUsernameTaken) {
         socket.emit("register", {
           username: username,
+          tell: tellText,
+          emotion: selectedColor,
         });
         router.push({ pathname: "/home", query: { username: username } });
         socket.emit("get-all-users");
@@ -40,25 +44,96 @@ const Login = () => {
       );
     }
   };
+  const colorVariants: {} = {
+    yellow: "bg-yellow-500",
+    blue: "bg-blue-500",
+    green: "bg-green-500",
+    violet: "bg-violet-500",
+    red: "bg-red-500",
+  };
+  const selectedColorVariants = {
+    yellow: "bg-yellow-700",
+    blue: "bg-blue-700",
+    green: "bg-green-700",
+    violet: "bg-violet-700",
+    red: "bg-red-700",
+  };
+  const emotions = [
+    { name: "Joy", color: "yellow" },
+    { name: "Sadness", color: "blue" },
+    { name: "Disgust", color: "green" },
+    { name: "Fear", color: "violet" },
+    { name: "Anger", color: "red" },
+  ];
+  const handleColorButtonClick = (color: string) => {
+    setSelectedColor(color === selectedColor ? null : color);
+  };
+  const getColorButtonStyle = (color: string) => {
+    const baseStyle =
+      "w-10 h-10 rounded-full flex items-center justify-center mr-2 relative";
+    const isSelected = color === selectedColor;
 
+    return `${baseStyle} ${
+      isSelected
+        ? selectedColorVariants[color as keyof typeof selectedColorVariants]
+        : colorVariants[color as keyof typeof colorVariants]
+    }`;
+  };
+
+  const getColorButtonTextStyle = (color: string) => {
+    return `text-white ${
+      selectedColor === color ? "text-[10px]" : "invisible"
+    } absolute center`;
+  };
   return (
     <div className="flex flex-1 flex-col items-center bg-bgColor w-screen h-screen justify-center">
       <Image src="/logo.png" alt="" width={400} height={200}></Image>
-      <form className="w-max mt-10 flex flex-row" onSubmit={handleLogin}>
-        <input
-          type="text"
-          className="w-80 h-16 rounded-2xl bg-borderColor pl-5 text-white"
-          placeholder="Enter your name"
-          name="username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="w-18 flex items-center justify-center h-16 w-16 bg-purple rounded-full ml-5"
-          name="Go"
-        >
-          <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
-        </button>
+
+      <form className="w-max mt-10 flex flex-col" onSubmit={handleLogin}>
+        <div className="flex flex-row">
+          <div className="flex flex-col items-center">
+            <input
+              type="text"
+              className="w-80 h-16 rounded-2xl bg-borderColor pl-5 text-white"
+              placeholder="Enter your name"
+              name="username"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="text"
+              className="w-full h-10 rounded-2xl bg-borderColor pl-5 text-white mt-2 text-sm"
+              placeholder="Want to tell..."
+              name="Tell"
+              value={tellText}
+              onChange={(e) => setTellText(e.target.value)}
+            />
+            <div className="flex mt-3">
+              {emotions.map((emotion) => (
+                <button
+                  key={emotion.color}
+                  type="button"
+                  className={getColorButtonStyle(emotion.color)}
+                  name={emotion.name}
+                  onClick={() => handleColorButtonClick(emotion.color)}
+                >
+                  <span className={getColorButtonTextStyle(emotion.color)}>
+                    {emotion.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex h-full items-center justify-center">
+            <button
+              type="submit"
+              className="h-full flex items-center justify-center w-16 bg-purple rounded-full ml-5"
+              name="Go"
+            >
+              <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
+            </button>
+          </div>
+        </div>
+        {warning && <p className="mt-3 text-red-500">{warning}</p>}
       </form>
       {warning && <p className="mt-3 text-red-500">{warning}</p>}
     </div>

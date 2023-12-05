@@ -14,15 +14,24 @@ const checkUsername = (username) => {
   }
   return false;
 };
-const addUser = (userId, username) => {
+const addUser = (userId, username, tell, emotion) => {
   // register user if not exist
   const index = users.findIndex((user) => user.username === username);
   if (index === -1) {
-    const user = { id: userId, username: username, rooms: [], status: 1 };
+    const user = {
+      id: userId,
+      username: username,
+      rooms: [],
+      status: 1,
+      tell: tell,
+      emotion: emotion,
+    };
     users.push(user);
   } else {
     users[index].id = userId;
     users[index].status = 1;
+    users[index].tell = tell;
+    users[index].emotion = emotion;
   }
   console.log(users);
 };

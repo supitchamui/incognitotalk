@@ -29,8 +29,8 @@ const io = Server(server);
 
 io.on("connection", (socket) => {
   socket.emit("userId", socket.id);
-  socket.on("register", ({ username }) => {
-    addUser(socket.id, username);
+  socket.on("register", ({ username, tell, emotion }) => {
+    addUser(socket.id, username, tell, emotion);
     socket.emit("userId", socket.id);
   });
 
