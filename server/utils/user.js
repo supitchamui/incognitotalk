@@ -6,15 +6,26 @@ const ObjectId = require("mongodb").ObjectId;
 const users = [];
 const rooms = [];
 const messages = [];
-const checkUsername = (username) => {
+const checkUsername = (username, password) => {
   const user = users.find((user) => user.username === username);
   console.log(user);
-  if (user && user.status === 1) {
-    return true;
+  // if (user && user.status === 1) {
+  //   return true;
+  // }
+  // return false;
+  if (user && user.password !== password) {
+    return false;
   }
-  return false;
+  return true;
+  //const index = users.findIndex((user) => user.username === username);
+  // if (index && users[index].password !== password) {
+  //   return false;
+  // }
+  // return true;
+  
+  
 };
-const addUser = (userId, username, tell, emotion) => {
+const addUser = (userId, username, password, tell, emotion) => {
   // register user if not exist
   const index = users.findIndex((user) => user.username === username);
   if (index === -1) {
@@ -22,6 +33,7 @@ const addUser = (userId, username, tell, emotion) => {
       id: userId,
       username: username,
       rooms: [],
+      password: password,
       status: 1,
       tell: tell,
       emotion: emotion,
@@ -102,6 +114,10 @@ const getAllUsers = () => {
   const allUsers = onlineUser.map((user) => user.username);
   return allUsers;
 };
+// const getAllUsers = () => {
+//   const allUsers = users.map((user) => user.username);
+//   return allUsers;
+// };
 
 const getAllRooms = (private) => {
   const filteredRoom = rooms.filter((r) => r.private === private);

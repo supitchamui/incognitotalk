@@ -29,8 +29,8 @@ const io = Server(server);
 
 io.on("connection", (socket) => {
   socket.emit("userId", socket.id);
-  socket.on("register", ({ username, tell, emotion }) => {
-    addUser(socket.id, username, tell, emotion);
+  socket.on("register", ({ username, password, tell, emotion }) => {
+    addUser(socket.id, username, password, tell, emotion);
     socket.emit("userId", socket.id);
   });
 
@@ -94,8 +94,8 @@ io.on("connection", (socket) => {
     leaveRoom(socket, username, room);
     socket.leave(room);
   });
-  socket.on("check-username", (username) => {
-    const isUsernameTaken = checkUsername(username);
+  socket.on("check-username", (username, password) => {
+    const isUsernameTaken = checkUsername(username, password);
     io.to(socket.id).emit("username-available", isUsernameTaken);
   });
 });

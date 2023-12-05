@@ -13,34 +13,46 @@ const Login = () => {
   const [warning, setWarning] = useState<string>("");
   const [tellText, setTellText] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>("");
   const validateUsername = (username: string) => {
     return /^[A-Za-z0-9ก-๙]{1,13}$/.test(username);
   };
+  const validatePassword = (password: string) => {
+    return /^[A-Za-z0-9ก-๙@_]{6,13}$/.test(password);
+  }
+
   const handleLogin = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
     if (validateUsername(username)) {
-      const isUsernameTaken = await new Promise<boolean>((resolve) => {
-        const usernameAvailabilityListener = (isAvailable: boolean) => {
-          resolve(isAvailable);
-        };
-
-        socket.once("username-available", usernameAvailabilityListener);
-        socket.emit("check-username", username);
-      });
-      if (!isUsernameTaken) {
-        socket.emit("register", {
-          username: username,
-          tell: tellText,
-          emotion: selectedColor,
+      if (validatePassword(password)){
+        const isUsernameTaken = await new Promise<boolean>((resolve) => {
+          const usernameAvailabilityListener = (isAvailable: boolean) => {
+            resolve(isAvailable);
+          };
+  
+          socket.once("username-available", usernameAvailabilityListener);
+          socket.emit("check-username", username, password);
         });
-        router.push({ pathname: "/home", query: { username: username } });
-        socket.emit("get-all-users");
-      } else {
-        setWarning("username ซ้ำ กรุณาตั้งชื่อใหม่");
+        if (isUsernameTaken) {
+          socket.emit("register", {
+            username: username,
+            password: password,
+            tell: tellText,
+            emotion: selectedColor,
+          });
+          router.push({ pathname: "/home", query: { username: username } });
+          socket.emit("get-all-users");
+        } else {
+          setWarning("หากมีบัญชีแล้ว กรุณาตรวจสอบ password ใหม่อีกครั้ง");
+        }
+      }else{
+        setWarning(
+          "Password  must contain only alphabet, number, Thai, @, _ and ไม่น้อยกว่า 6 not exceed 13 characters."
+        );
       }
     } else {
       setWarning(
-        "Name must contain only alphabet and number, and not exceed 10 characters."
+        "Name must contain only alphabet Thai and number, and not exceed 13 characters."
       );
     }
   };
@@ -101,7 +113,14 @@ const Login = () => {
             />
             <input
               type="text"
-              className="w-full h-10 rounded-2xl bg-borderColor pl-5 text-white mt-2 text-sm"
+              className="w-80 h-16 rounded-2xl bg-borderColor pl-5 text-white mt-2 mb-10"
+              placeholder="Enter your password"
+              name="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="text"
+              className="w-full h-10 rounded-2xl bg-borderColor pl-5 text-white mt-2 text-sm "
               placeholder="Want to tell..."
               name="Tell"
               value={tellText}
@@ -123,20 +142,22 @@ const Login = () => {
               ))}
             </div>
           </div>
-          <div className="flex h-full items-center justify-center">
+
+        </div>
+        {warning && <p className="mt-3 text-red-500">{warning}</p>}
+        <div className="flex h-full items-center justify-center">
             <button
               type="submit"
-              className="h-full flex items-center justify-center w-16 bg-purple rounded-full ml-5"
+              className="mt-10 h-16 flex items-center justify-center w-16 bg-purple rounded-full"
               name="Go"
             >
               <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
             </button>
           </div>
-        </div>
-        {warning && <p className="mt-3 text-red-500">{warning}</p>}
       </form>
-      {warning && <p className="mt-3 text-red-500">{warning}</p>}
+
     </div>
+    
   );
 };
 export default Login;
