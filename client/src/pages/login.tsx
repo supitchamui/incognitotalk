@@ -19,17 +19,17 @@ const Login = () => {
   };
   const validatePassword = (password: string) => {
     return /^[A-Za-z0-9ก-๙@_]{6,13}$/.test(password);
-  }
+  };
 
   const handleLogin = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
     if (validateUsername(username)) {
-      if (validatePassword(password)){
+      if (validatePassword(password)) {
         const isUsernameTaken = await new Promise<boolean>((resolve) => {
           const usernameAvailabilityListener = (isAvailable: boolean) => {
             resolve(isAvailable);
           };
-  
+
           socket.once("verifyUser", usernameAvailabilityListener);
           socket.emit("check-user", username, password);
         });
@@ -43,9 +43,11 @@ const Login = () => {
           router.push({ pathname: "/home", query: { username: username } });
           socket.emit("get-all-users");
         } else {
-          setWarning("This username is already in use. Or please enter your password again.");
+          setWarning(
+            "This username is already in use. Or please enter your password again."
+          );
         }
-      }else{
+      } else {
         setWarning(
           "Password must contain only alphabet, number, Thai, @, _ and not less than 6 not exceed 13 characters."
         );
@@ -112,7 +114,7 @@ const Login = () => {
               onChange={(e) => setUsername(e.target.value)}
             />
             <input
-              type="text"
+              type="password"
               className="w-80 h-16 rounded-2xl bg-borderColor pl-5 text-white mt-2 mb-10"
               placeholder="Enter your password"
               name="password"
@@ -144,20 +146,17 @@ const Login = () => {
           </div>
         </div>
         <div className="flex h-full items-center justify-center">
-            <button
-              type="submit"
-              className="mt-10 h-16 flex items-center justify-center w-16 bg-purple rounded-full"
-              name="Go"
-            >
-              <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
-            </button>
-          </div>
-
+          <button
+            type="submit"
+            className="mt-10 h-16 flex items-center justify-center w-16 bg-purple rounded-full"
+            name="Go"
+          >
+            <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
+          </button>
+        </div>
       </form>
       {warning && <p className="mt-3 text-red-500">{warning}</p>}
-
     </div>
-    
   );
 };
 export default Login;

@@ -10,13 +10,17 @@ interface ChatFriendsProps {
   selectedFriend: string;
   isPrivate: any;
 }
-
+interface IUser {
+  username: string;
+  emotion: string;
+  tell: string;
+}
 const Friends: React.FC<ChatFriendsProps> = ({
   onGroupClick,
   selectedFriend,
   isPrivate,
 }) => {
-  const [friendList, setFriendList] = useState<string[]>([]);
+  const [friendList, setFriendList] = useState<IUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const { username } = router.query;
@@ -29,7 +33,7 @@ const Friends: React.FC<ChatFriendsProps> = ({
     setSearchTerm(searchQuery.value);
   };
   const filteredFriends = friendList.filter((name) =>
-    name.toLowerCase().includes(searchTerm.toLowerCase())
+    name.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {
@@ -37,10 +41,12 @@ const Friends: React.FC<ChatFriendsProps> = ({
   }, []);
 
   useEffect(() => {
-    const friendListener = (data: string[]) => {
+    const friendListener = (data: IUser[]) => {
       const allUsers = data;
       if (username !== undefined && typeof username === "string") {
-        const currentUser = data.indexOf(username);
+        const currentUser = data.findIndex(
+          (user) => user.username === username
+        );
         if (currentUser !== -1) {
           allUsers.splice(currentUser, 1);
         }
@@ -52,7 +58,20 @@ const Friends: React.FC<ChatFriendsProps> = ({
       socket.off("users", friendListener);
     };
   }, [username]);
-
+  const colorVariants: {} = {
+    yellow: "bg-yellow-500",
+    blue: "bg-blue-500",
+    green: "bg-green-500",
+    violet: "bg-violet-500",
+    red: "bg-red-500",
+  };
+  const emotions = {
+    yellow: "Joy",
+    blue: "Sadness",
+    green: "Disgust",
+    violet: "Fear",
+    red: "Anger",
+  };
   return (
     <div className="bg-bgColor w-1/3 border-r border-borderColor">
       <div className="h-[20%] w-full border-b border-borderColor items-center flex justify-center">
@@ -76,38 +95,52 @@ const Friends: React.FC<ChatFriendsProps> = ({
           return (
             <div
               className={`h-28 w-full border-b border-borderColor items-center flex cursor-pointer ${
-                friend == selectedFriend && isPrivate
+                friend.username == selectedFriend && isPrivate
                   ? "bg-purple bg-opacity-40"
                   : "hover:bg-purple hover:bg-opacity-5"
               } transition duration-250`}
               key={index}
               onClick={() => {
-                onGroupClick(friend, true);
+                onGroupClick(friend.username, true);
               }}
             >
               <Image
                 src={`/Frame_${
-                  friend ? hashString(friend as string) % 9 : 0
+                  friend ? hashString(friend.username as string) % 9 : 0
                 }.png`}
                 alt=""
                 width={75}
                 height={50}
                 className="ml-6"
               ></Image>
-              <div className="font-roboto ml-6">
+              <div className="font-roboto ml-6 flex flex-col space-y-1">
                 <p
                   className={`text-white text-xl ${
-                    friend === selectedFriend && isPrivate ? "font-bold" : ""
+                    friend.username === selectedFriend && isPrivate
+                      ? "font-bold"
+                      : ""
                   }`}
                 >
-                  {friend}
-                {/* แสดงวงกลมที่มีสีในนั้น */}
-                
+                  {friend.username}
                 </p>
-                  
+                <p
+                  className={`text-[14px] ${
+                    friend.username === selectedFriend && isPrivate
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {friend.tell}
+                </p>
+                <p
+                  className={`text-[12px] w-fit text-gray-200 p-1 text-center rounded-full ${
+                    colorVariants[friend.emotion as keyof typeof colorVariants]
+                  }`}
+                >
+                  {emotions[friend.emotion as keyof typeof colorVariants]}
+                </p>
               </div>
             </div>
-
           );
         })}
       </div>

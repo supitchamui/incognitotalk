@@ -29,8 +29,8 @@ const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
             console.log("friends");
           }}
         >
-          <UserIcon className="h-8 w-8" /> 
-          <span className="text-sm font-medium">Friends</span>
+          <ChatBubbleOvalLeftEllipsisIcon className="h-8 w-8" />
+          <span className="text-sm font-medium">Online</span>
         </button>
       </div>
       <div className="mb-8">
@@ -64,8 +64,8 @@ const SidebarMenu = ({ setPage, currentPage }: SidebarMenuProps) => {
             console.log("all-chats");
           }}
         >
-          <ChatBubbleOvalLeftEllipsisIcon className="h-8 w-8" />
-          <span className="text-sm font-medium">All Chats</span>
+          <UserIcon className="h-8 w-8" />
+          <span className="text-sm font-medium">Friends</span>
         </button>
       </div>
     </div>
