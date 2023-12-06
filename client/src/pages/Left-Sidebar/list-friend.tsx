@@ -101,9 +101,13 @@ const Friends: React.FC<ChatFriendsProps> = ({
                   }`}
                 >
                   {friend}
+                {/* แสดงวงกลมที่มีสีในนั้น */}
+                
                 </p>
+                  
               </div>
             </div>
+
           );
         })}
       </div>

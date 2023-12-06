@@ -1,4 +1,4 @@
-describe('US3: ผู้ใช้สามารถตั้งชื่อ username เป็นภาษาไทยตามเงื่อนไขที่กำหนดไว้', () => {
+describe('US9: ผู้ใช้ต้องตั้ง Password เพื่อการ login ครั้งต่อไปด้วย Username เดิม', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000');
   });
@@ -34,10 +34,39 @@ describe('US3: ผู้ใช้สามารถตั้งชื่อ user
 
   })
 
-  it('TC2: หาก username และ password ตั้งถูกต้องตามเงื่อนไข จะสามารถกดเข้าสู่หน้าต่อไปได้ หากกด logout แล้วเข้าด้วย username เดิม แต่ password ผิดจะไม่สามารถเข้าสู่ระบบได้', () => {
+  it('TC2: หากกรอก username ถูกต้องตามเงื่อนไข แต่ password ไม่ถูกต้องตามเงื่อนไข จะไม่สามารถกดเข้าสู่หน้าต่อไปได้ และขึ้นแจ้งเตือนเงื่อนไขที่ถูกต้อง', () => {
+    const validUsername = 'test';
+    const invalidPassword1 = 'test 123';
+    const invalidPassword2 = 'test12345678910';
+    const invalidPassword3 = 'test';
+
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('input[name="password"]').type(invalidPassword1);
+    cy.get('button[name="Go"]').click();
+    cy.url().should('not.include', '/home');
+    cy.url().should('not.include', `username=${encodeURIComponent(validUsername)}`);
+    cy.contains('Password must contain only alphabet, number, Thai, @, _ and not less than 6 not exceed 13 characters.', { timeout: 4000 }).should('be.visible');
+
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('input[name="password"]').type(invalidPassword2);
+    cy.get('button[name="Go"]').click();
+    cy.url().should('not.include', '/home');
+    cy.url().should('not.include', `username=${encodeURIComponent(validUsername)}`);
+    cy.contains('Password must contain only alphabet, number, Thai, @, _ and not less than 6 not exceed 13 characters.', { timeout: 4000 }).should('be.visible');
+
+    cy.get('input[name="username"]').type(validUsername);
+    cy.get('input[name="password"]').type(invalidPassword3);
+    cy.get('button[name="Go"]').click();
+    cy.url().should('not.include', '/home');
+    cy.url().should('not.include', `username=${encodeURIComponent(validUsername)}`);
+    cy.contains('Password must contain only alphabet, number, Thai, @, _ and not less than 6 not exceed 13 characters.').should('be.visible');
+
+  })
+
+  it('TC3: หาก username และ password ตั้งถูกต้องตามเงื่อนไข จะสามารถกดเข้าสู่หน้าต่อไปได้ หากกด logout แล้วเข้าด้วย username เดิม แต่ password ผิดจะไม่สามารถเข้าสู่ระบบได้ และขึ้นแจ้งเตือนให้กรอกใหม่อีกครั้ง', () => {
     const validUsername = 'test';
     const validPassword = 'test123';
-    const validPasswordFail = 'test1234';
+    const invalidPassword = 'test1234';
 
     cy.get('input[name="username"]').type(validUsername);
     cy.get('input[name="password"]').type(validPassword);
@@ -53,12 +82,13 @@ describe('US3: ผู้ใช้สามารถตั้งชื่อ user
     cy.url().should('not.include', '/login');
     
     cy.get('input[name="username"]').type(validUsername);
-    cy.get('input[name="password"]').type(validPasswordFail);
+    cy.get('input[name="password"]').type(invalidPassword);
 
     cy.get('button[name="Go"]').click();
 
     cy.url().should('not.include', '/home');
     cy.url().should('not.include', `username=${encodeURIComponent(validUsername)}`);
+    cy.contains('This username is already in use. Or please enter your password again.').should('be.visible');
 
   })
 

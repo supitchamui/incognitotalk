@@ -30,8 +30,8 @@ const Login = () => {
             resolve(isAvailable);
           };
   
-          socket.once("username-available", usernameAvailabilityListener);
-          socket.emit("check-username", username, password);
+          socket.once("verifyUser", usernameAvailabilityListener);
+          socket.emit("check-user", username, password);
         });
         if (isUsernameTaken) {
           socket.emit("register", {
@@ -43,11 +43,11 @@ const Login = () => {
           router.push({ pathname: "/home", query: { username: username } });
           socket.emit("get-all-users");
         } else {
-          setWarning("หากมีบัญชีแล้ว กรุณาตรวจสอบ password ใหม่อีกครั้ง");
+          setWarning("This username is already in use. Or please enter your password again.");
         }
       }else{
         setWarning(
-          "Password  must contain only alphabet, number, Thai, @, _ and ไม่น้อยกว่า 6 not exceed 13 characters."
+          "Password must contain only alphabet, number, Thai, @, _ and not less than 6 not exceed 13 characters."
         );
       }
     } else {
@@ -142,9 +142,7 @@ const Login = () => {
               ))}
             </div>
           </div>
-
         </div>
-        {warning && <p className="mt-3 text-red-500">{warning}</p>}
         <div className="flex h-full items-center justify-center">
             <button
               type="submit"
@@ -154,7 +152,9 @@ const Login = () => {
               <ArrowRightIcon className="h-8 w-8 text-white" strokeWidth={2} />
             </button>
           </div>
+
       </form>
+      {warning && <p className="mt-3 text-red-500">{warning}</p>}
 
     </div>
     

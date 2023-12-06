@@ -4,7 +4,7 @@ const cors = require("cors");
 const http = require("http");
 const Server = require("socket.io");
 const {
-  checkUsername,
+  checkUser,
   joinRoom,
   getAllUsers,
   leaveRoom,
@@ -94,9 +94,9 @@ io.on("connection", (socket) => {
     leaveRoom(socket, username, room);
     socket.leave(room);
   });
-  socket.on("check-username", (username, password) => {
-    const isUsernameTaken = checkUsername(username, password);
-    io.to(socket.id).emit("username-available", isUsernameTaken);
+  socket.on("check-user", (username, password) => {
+    const isUsernameTaken = checkUser (username, password);
+    io.to(socket.id).emit("verifyUser", isUsernameTaken);
   });
 });
 

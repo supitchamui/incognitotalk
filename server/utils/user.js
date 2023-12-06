@@ -6,7 +6,7 @@ const ObjectId = require("mongodb").ObjectId;
 const users = [];
 const rooms = [];
 const messages = [];
-const checkUsername = (username, password) => {
+const checkUser  = (username, password) => {
   const user = users.find((user) => user.username === username);
   console.log(user);
   // if (user && user.status === 1) {
@@ -34,14 +34,14 @@ const addUser = (userId, username, password, tell, emotion) => {
       username: username,
       rooms: [],
       password: password,
-      status: 1,
+      //status: 1,
       tell: tell,
       emotion: emotion,
     };
     users.push(user);
   } else {
     users[index].id = userId;
-    users[index].status = 1;
+    //users[index].status = 1;
     users[index].tell = tell;
     users[index].emotion = emotion;
   }
@@ -109,15 +109,15 @@ const getCurrentUser = (username) => {
   return users.find((user) => user.username === username);
 };
 
-const getAllUsers = () => {
-  const onlineUser = users.filter((user) => user.status === 1);
-  const allUsers = onlineUser.map((user) => user.username);
-  return allUsers;
-};
 // const getAllUsers = () => {
-//   const allUsers = users.map((user) => user.username);
+//   const onlineUser = users.filter((user) => user.status === 1);
+//   const allUsers = onlineUser.map((user) => user.username);
 //   return allUsers;
 // };
+const getAllUsers = () => {
+  const allUsers = users.map((user) => user.username);
+  return allUsers;
+};
 
 const getAllRooms = (private) => {
   const filteredRoom = rooms.filter((r) => r.private === private);
@@ -221,7 +221,7 @@ const logout = async (username) => {
   try {
     const userIndex = users.findIndex((user) => user.username === username);
     if (userIndex !== -1) {
-      users[userIndex].status = 0;
+      //users[userIndex].status = 0;
       console.log(`User ${username} has been logout`);
     } else {
       console.log(`User ${username} not found.`);
@@ -246,5 +246,5 @@ module.exports = {
   announceMessage,
   removeAnnounce,
   getMessageInRoom,
-  checkUsername,
+  checkUser ,
 };
