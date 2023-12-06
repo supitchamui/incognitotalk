@@ -33,6 +33,19 @@ const Login = () => {
           socket.once("verifyUser", usernameAvailabilityListener);
           socket.emit("check-user", username, password);
         });
+        if (!selectedColor) {
+          setWarning("Please select an emotion.");
+          return;
+        }
+        if (!tellText) {
+          setWarning("Please tell something in the Tell field.");
+          return;
+        }
+        if (tellText.length > 60) {
+          setWarning("Tell text must not exceed 60 characters.");
+          return;
+        }
+        
         if (isUsernameTaken) {
           socket.emit("register", {
             username: username,
